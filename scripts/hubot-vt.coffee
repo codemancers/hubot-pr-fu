@@ -21,3 +21,11 @@ module.exports = (robot) ->
      \t 2. app/models/papi.rb\n
      \t Conflict created by PR #15616
 ```"
+
+
+  # This listeners listens for a POST request with the following params:
+  # repo: A string of the form: "username/reponame"w
+  # pr: PR number
+  robot.router.post '/hubot/gh-hook', (req, res) ->
+    robot.send JSON.stringify(req)
+    robot.send JSON.stringify(res)
