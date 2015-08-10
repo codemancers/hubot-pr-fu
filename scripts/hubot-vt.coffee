@@ -33,4 +33,5 @@ module.exports = (robot) ->
 
     robot.send { room: 'general' }, message
 
-     res.send 'OK'
+    res.writeHead 204, { 'Content-Length': 0 }
+    res.end()
