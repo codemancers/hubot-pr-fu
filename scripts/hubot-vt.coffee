@@ -23,9 +23,14 @@ module.exports = (robot) ->
 ```"
 
 
-  # This listeners listens for a POST request with the following params:
-  # repo: A string of the form: "username/reponame"w
-  # pr: PR number
   robot.router.post '/hubot/gh-hook', (req, res) ->
-    robot.send JSON.stringify(req)
-    robot.send JSON.stringify(res)
+    repoName = req.body.repository.full_name
+    pusher   = req.body.sender.login
+
+    message = switch req.headers['x-github-event']
+      when 'push' then "#{pusher} has pushed a branch to #{repoName}"
+      when 'commit' then "#{pusher} has committed something to #{repoName}"
+
+    robot.send { room: 'general' }, message
+
+     res.send 'OK'
