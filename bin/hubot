@@ -4,5 +4,9 @@ set -e
 
 npm install
 export PATH="node_modules/.bin:node_modules/hubot/node_modules/.bin:$PATH"
+export REDIS_URL=redis://127.0.0.1:5786/
 
+echo "Starting Redis"
+redis-server redis.conf --port 5786 &&
+echo "Started Redis as a daemon"
 exec node_modules/.bin/hubot --name "hubot-github" "$@"
