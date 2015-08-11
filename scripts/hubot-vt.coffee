@@ -21,3 +21,17 @@ module.exports = (robot) ->
      \t 2. app/models/papi.rb\n
      \t Conflict created by PR #15616
 ```"
+
+
+  robot.router.post '/hubot/gh-hook', (req, res) ->
+    repoName = req.body.repository.full_name
+    pusher   = req.body.sender.login
+
+    message = switch req.headers['x-github-event']
+      when 'push' then "#{pusher} has pushed a branch to #{repoName}"
+      when 'commit' then "#{pusher} has committed something to #{repoName}"
+
+    robot.send { room: 'general' }, message
+
+    res.writeHead 204, { 'Content-Length': 0 }
+    res.end()
