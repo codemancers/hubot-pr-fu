@@ -95,12 +95,12 @@ module.exports = (robot) ->
           when "opened"
             robot.emit "pr_opened", {
               prId: prId,
-              ghUserName = req.body.user.login
+              ghUserName: req.body.user.login
             }
           when "closed"
             robot.emit "pr_opened", {
               prId: prId,
-              ghUserName = req.body.user.login
+              ghUserName: req.body.user.login
             }
 
         robot.send { room: 'general' },
