@@ -1,4 +1,27 @@
+_ = require('underscore')
+
 module.exports = (robot) ->
+
+  allOpenPrsBy = (ghUsername) ->
+    allPrsByCurrentUserStr = robot.brain.get "gh-prs-opened-by-#{ghUserName}"
+
+    if allPrsByCurrentUserStr
+      allPrsByCurrentUser = JSON.parse(allPrsByCurrentUserStr)
+    else
+      allPrsByCurrentUser = []
+
+    return allPrsByCurrentUser
+
+  allOpenPrs = () ->
+    allOpenPrsStr = robot.brain.get "open-prs"
+
+    if allOpenPrsStr
+      allOpenPrs = JSON.parse(allOpenPrsStr)
+    else
+      allOpenPrs = []
+
+    return allOpenPrs
+
   robot.respond /status mine/i, (res) ->
     # Check if the github id for this user exists.
     # If not, ask for github user name
@@ -20,37 +43,68 @@ module.exports = (robot) ->
             return
     else
       res.send "Checking with Github…"
-      res.send "PR 12345: All good; mergeable to sprint branch\n
-        ```
-        Send payments to PAPI\n
-        from: send-payments-to-papi\n
-        to:   sprint\n
-        date: 12 Aug 2015\n
-     ```"
-      res.send "PR 22342: MERGE CONFLICT\n
-        ```
-        Receive payments from PAPI\n
-        from: receive-payments-from-papi\n
-        to:   sprint\n
-        date: 13 Aug 2015\n\n
+      robot.emit "check_open_prs", {
+        slackUserName: slackUser,
+        ghUserName: ghUserName
+      }
 
-        possible conflict in files:\n
-       \t 1. app/models/payment.rb\n
-       \t Conflict created by PR #12345\n
-       \t 2. app/models/papi.rb\n
-       \t Conflict created by PR #15616
-      ```"
 
+  robot.on "check_open_prs", (userMetaData) ->
+    slackUserName = userMetaData.slackUserName
+    ghUserName =  userMetaData.ghUserName
+
+    robot.http("https://api.github.com/repos/veritrans/turbo/pulls/")
+
+  robot.on "pr_opened", (data) ->
+    allOpenPrsByCurrentUser = _.merge(allOpenPrsBy(data.ghUserName), [ data.prId ])
+    allOpenPrs = _.merge(allOpenPrs(), [ data.prId ])
+
+    robot.brain.set(
+      "gh-prs-opened-by-#{data.ghUserName}",
+      JSON.stringify(allOpenPrsByCurrentUser)
+    )
+    robot.brain.set("open-prs", JSON.stringify(allOpenPrs))
+
+  robot.on "pr_closed", (data) ->
+    allOpenPrsByCurrentUser = _.without(allOpenPrsBy(data.ghUserName), data.prId)
+    allOpenPrs = _.without(allOpenPrs(), data.prId)
+
+    robot.brain.set(
+      "gh-prs-opened-by-#{data.ghUserName}",
+      JSON.stringify(allPrsByCurrentUser)
+    )
+    robot.brain.set("open-prs", JSON.stringify(allOpenPrs))
 
   robot.router.post '/hubot/gh-hook', (req, res) ->
     repoName = req.body.repository.full_name
     pusher   = req.body.sender.login
 
     message = switch req.headers['x-github-event']
-      when 'push' then "#{pusher} has pushed a branch to #{repoName}"
-      when 'commit' then "#{pusher} has committed something to #{repoName}"
+      when 'push'
+        "#{pusher} has pushed a branch to #{repoName}"
+        robot.send { room: 'general' }, message
+      when 'commit'
+        "#{pusher} has committed something to #{repoName}"
+        robot.send { room: 'general' }, message
+      when 'pull_request'
+        action = req.body.action
+        prId   = req.body.pull_request.number
+        ghUserName = req.body.user.login
 
-    robot.send { room: 'general' }, message
+        switch action
+          when "opened"
+            robot.emit "pr_opened", {
+              prId: prId,
+              ghUserName = req.body.user.login
+            }
+          when "closed"
+            robot.emit "pr_opened", {
+              prId: prId,
+              ghUserName = req.body.user.login
+            }
+
+        robot.send { room: 'general' },
+
 
     res.writeHead 204, { 'Content-Length': 0 }
     res.end()
