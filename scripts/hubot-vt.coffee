@@ -1,8 +1,9 @@
-_ = require "underscore"
+_         = require "underscore"
 authToken = process.env.GH_AUTH_TOKEN
+ghOrg     = process.env.HUBOT_VT_GITHUB_ORG
+ghRepo    = process.env.HUBOT_VT_GITHUB_REPO
 
 module.exports = (robot) ->
-
   getOpenPrUrls = (prObject) ->
     if prObject.state == "open" then prObject.url else undefined
 
@@ -10,7 +11,7 @@ module.exports = (robot) ->
     resp.send "Checking…"
 
     robot
-      .http("https://api.github.com/repos/sinatra/sinatra/pulls")
+      .http("https://api.github.com/repos/#{ghOrg}/#{ghRepo}/pulls")
       .header('Authorization', "token #{authToken}")
       .get() (err, res, body) =>
         if err
