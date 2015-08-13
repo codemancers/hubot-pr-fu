@@ -27,7 +27,7 @@ module.exports = (robot) ->
                   json = JSON.parse(body)
 
                   if !json.mergeable
-                    messageText = "<#{json.url}|##{json.number}> has a conflict."
+                    messageText = "<#{json.html_url}|##{json.number} _#{json.title}_> has a conflict."
 
                     if json.assignee
                       assignedTo = json.assignee.login
@@ -38,8 +38,7 @@ module.exports = (robot) ->
                       channel: resp.message.room
                       attachments: [
                         text: "
-                          #{messageText}
-                          #{json.title}\n\n
+                          #{messageText}\n\n
 
                           Opened By: #{json.user.login}\n
                           Assigned To: #{assignedTo}
