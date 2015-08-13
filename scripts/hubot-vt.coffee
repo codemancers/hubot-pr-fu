@@ -6,7 +6,7 @@ module.exports = (robot) ->
   getOpenPrUrls = (prObject) ->
     if prObject.state == "open" then prObject.url else undefined
 
-  robot.respond /status/i, (resp) ->
+  robot.hear /status all/i, (resp) ->
     resp.send "Checking…"
 
     robot
