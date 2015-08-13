@@ -18,14 +18,35 @@ module.exports = (robot) ->
         else
           openPrUrls = _.compact(_.map(JSON.parse(body), getOpenPrUrls))
           resp.send "#{_.size(openPrUrls)} PRs in open status"
-          _.map(
+          resp.send "Now checking for any possible merge conflicts…"
+          _.each(
             openPrUrls,
             (openPrUrl) =>
               robot.http(openPrUrl).header('Authorization', "token #{authToken}").get() (err, res, body) =>
                 if !err
                   json = JSON.parse(body)
-                  if json.mergeable
-                    resp.send "PR #{openPrUrl} is mergeable"
-                  else
-                    resp.send "PR #{openPrUrl} is NOT mergeable"
+
+                  if !json.mergeable
+                    messageText = "<#{json.url}|##{json.number}> has a conflict."
+
+                    if json.assignee
+                      assignedTo = json.assignee.login
+                    else
+                      assignedTo = "Not assigned"
+
+                    msgData = {
+                      channel: resp.message.room
+                      attachments: [
+                        text: "
+                          #{messageText}
+                          #{json.title}\n\n
+
+                          Opened By: #{json.user.login}\n
+                          Assigned To: #{assignedTo}
+                        "
+                        color: "#ff0000"
+                        mrkdwn_in: ["text"]
+                      ]
+                    }
+                    robot.adapter.customMessage msgData
           )
