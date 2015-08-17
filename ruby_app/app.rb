@@ -1,5 +1,6 @@
 require 'octokit'
 require './lib/aggregator.rb'
+require './lib/stats.rb'
 
 
 Octokit.default_media_type = "application/vnd.github.beta+json"

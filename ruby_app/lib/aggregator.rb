@@ -9,7 +9,7 @@ class Aggregator
     @client = Octokit::Client.new access_token: GH_AUTH_TOKEN
     @repo   = client.repo "#{HUBOT_VT_GITHUB_ORG}/#{HUBOT_VT_GITHUB_REPO}"
 
-    get_open_pulls!
+    get_pulls!
     get_individual_open_pull_data!
   end
 
@@ -40,34 +40,8 @@ class Aggregator
       end
   end
 
-  def stats
-    stats = ""
-
-    stats << "#{open_pulls.count} open PRs\n"
-    stats << "\n"
-
-    aggregated_data.group_by { |x| x[:opened_by] }.each do |k, v|
-      stats << "#{v.count} by #{k}\n"
-    end
-
-    stats << "\n"
-    stats << "#{mergeable_pulls.count} mergeable\n"
-    stats << "#{unmergeable_pulls.count} unmergeable\n"
-    stats << "\n"
-
-
-    unmergeable_pulls.each do |pull|
-      stats << "#{pull[:number]} #{pull[:title]}\n"
-      stats << "Assigned to : #{pull[:assignee]}\n"
-      stats << "Opened by   : #{pull[:opened_by]}\n"
-      stats << "\n"
-    end
-
-    stats
-  end
-
   def to_s
-    stats
+    Stats.new(self).to_s
   end
 
   private
