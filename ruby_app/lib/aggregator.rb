@@ -1,5 +1,5 @@
 class Aggregator
-  attr_reader :client, :repo, :pulls, :aggregated_data
+  attr_reader :client, :repo, :pulls, :aggregated_data, :pull_data
 
   GH_AUTH_TOKEN        = ENV["GH_AUTH_TOKEN"]
   HUBOT_VT_GITHUB_ORG  = ENV["HUBOT_VT_GITHUB_ORG"]
@@ -8,30 +8,13 @@ class Aggregator
   def initialize
     @client = Octokit::Client.new access_token: GH_AUTH_TOKEN
     @repo   = client.repo "#{HUBOT_VT_GITHUB_ORG}/#{HUBOT_VT_GITHUB_REPO}"
+
+    get_open_pulls!
+    get_individual_open_pull_data!
   end
 
   def open_pulls
     pulls.select { |x| x[:state] = "open" }
-  end
-
-  def pulls
-    @pulls  ||= repo.rels[:pulls].get.data
-  end
-
-  def aggregated_data
-    @aggregated_data ||=
-      open_pulls.map do |pull|
-        pull_request_data = pull.rels[:self].get.data
-        {
-          title:      pull_request_data[:title],
-          mergeable:  pull_request_data[:mergeable] || "Unspecified",
-          assignee:   pull_request_data[:assignee] || "Not assigned",
-          number:     pull_request_data[:number],
-          opened_by:  pull_request_data[:user][:login],
-          html_url:   pull_request_data[:html_url],
-          created_at: pull_request_data[:created_at]
-        }
-      end
   end
 
   def mergeable_pulls
@@ -40,6 +23,21 @@ class Aggregator
 
   def unmergeable_pulls
     aggregated_data.select { |x| x[:mergeable] != true }
+  end
+
+  def aggregated_data
+    @aggregated_data ||=
+      pull_data.map do |pull|
+        {
+          title:      pull[:title],
+          mergeable:  pull[:mergeable] || "Unspecified",
+          assignee:   pull[:assignee] || "Not assigned",
+          number:     pull[:number],
+          opened_by:  pull[:user][:login],
+          html_url:   pull[:html_url],
+          created_at: pull[:created_at]
+        }
+      end
   end
 
   def stats
@@ -68,11 +66,20 @@ class Aggregator
     stats
   end
 
-  def print_stats
-    puts stats
-  end
-
   def to_s
     stats
+  end
+
+  private
+
+  def get_pulls!
+    @pulls ||= repo.rels[:pulls].get.data
+  end
+
+  def get_individual_open_pull_data!
+    @pull_data ||=
+      open_pulls.map do |pull|
+        pull.rels[:self].get.data
+      end
   end
 end
