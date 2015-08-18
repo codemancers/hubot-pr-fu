@@ -44,6 +44,10 @@ class Aggregator
     Stats.new(self).to_s
   end
 
+  def stats
+    Stats.new(self)
+  end
+
   private
 
   def get_pulls!

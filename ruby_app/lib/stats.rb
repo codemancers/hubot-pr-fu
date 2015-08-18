@@ -14,11 +14,41 @@ class Stats
   end
 
   def to_hash
+    attachments =
+      aggregator.unmergeable_pulls.map do |pull|
+        msg_text = ""
+
+        msg_text << "<#{pull[:html_url]}|#{pull[:number]} _#{pull[:title]}_> has a conflict\n"
+        msg_text << "\n"
+        msg_text << "Assigned to: #{pull[:assignee]}\n"
+        msg_text << "Opened by: #{pull[:opened_by]}\n"
+
+        {
+          text: msg_text,
+          color: "#ff0000",
+          mrkdwn_in: ["text"]
+        }
+      end
+
+    {
+      text: basic_stats,
+      attachments: attachments
+    }
   end
 
   private
 
-  def stats
+  # Outputs:
+  #
+  #  11 open PRs
+  #
+  #  6 by user1
+  #  2 by user2
+  #  3 by user3
+  #
+  #  10 mergeable
+  #  1 unmergeable
+  def basic_stats
     stats = ""
 
     stats << "#{aggregator.open_pulls.count} open PRs\n"
@@ -33,6 +63,25 @@ class Stats
     stats << "#{aggregator.unmergeable_pulls.count} unmergeable\n"
     stats << "\n"
 
+    stats
+  end
+
+  # Outputs:
+  #
+  #  11 open PRs
+  #
+  #  6 by user1
+  #  2 by user2
+  #  3 by user3
+  #
+  #  10 mergeable
+  #  1 unmergeable
+  #
+  #  123 title
+  #  Assigned to: <userx>
+  #  Opened by: <usery>
+  def stats
+    stats = basic_stats
 
     aggregator.unmergeable_pulls.each do |pull|
       stats << "#{pull[:number]} #{pull[:title]}\n"
