@@ -40,12 +40,12 @@ class Aggregator
       end
   end
 
-  def to_s
-    Stats.new(self).to_s
+  def all_stats
+    AllStats.new(self)
   end
 
-  def stats
-    Stats.new(self)
+  def conflict_stats
+    ConflictStats.new(self)
   end
 
   private
