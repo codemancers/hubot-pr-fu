@@ -20,8 +20,7 @@ class Stats
 
         msg_text << "<#{pull[:html_url]}|#{pull[:number]} _#{pull[:title]}_> has a conflict\n"
         msg_text << "\n"
-        msg_text << "Assigned to: #{pull[:assignee]}\n"
-        msg_text << "Opened by: #{pull[:opened_by]}\n"
+        msg_text << "Assigned to: #{pull[:assignee]}; Opened by:#{pull[:opened_by]}\n"
 
         {
           text: msg_text,
