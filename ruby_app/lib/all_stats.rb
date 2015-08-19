@@ -29,15 +29,25 @@ class AllStats
     stats << "#{aggregator.open_pulls.count} open PRs\n"
     stats << "\n"
 
-    aggregator.aggregated_data.group_by { |x| x[:opened_by] }.each do |k, v|
-      stats << "#{v.count} by #{k}\n"
+    grouped_aggregated_data.each do |username, prs|
+      pr_links = prs.map do |pr|
+        "<#{pr[:html_url]}|##{pr[:number]}>"
+      end.join(", ")
+
+      stats << "#{prs.count} by #{username}: #{pr_links}\n"
     end
 
     stats << "\n"
     stats << "#{aggregator.mergeable_pulls.count} mergeable\n"
     stats << "#{aggregator.unmergeable_pulls.count} unmergeable\n"
     stats << "\n"
+    stats << "Run `status conflicts` to know details about unmergeable pulls\n"
+    stats << "\n"
 
     stats
+  end
+
+  def grouped_aggregated_data
+    aggregator.aggregated_data.group_by { |x| x[:opened_by] }
   end
 end

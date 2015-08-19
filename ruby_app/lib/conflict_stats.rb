@@ -18,7 +18,7 @@ class ConflictStats
     aggregator.unmergeable_pulls.map do |pull|
       msg_text = ""
 
-      msg_text << "<#{pull[:html_url]}|#{pull[:number]} _#{pull[:title]}_> has a conflict\n"
+      msg_text << "<#{pull[:html_url]}|##{pull[:number]} _#{pull[:title]}_> has a conflict\n"
       msg_text << "\n"
       msg_text << "Assigned to: #{pull[:assignee]}; Opened by: #{pull[:opened_by]}\n"
 
