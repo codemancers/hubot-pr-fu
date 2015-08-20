@@ -8,8 +8,8 @@ class UserStats
 
   def to_hash
     {
-      text: "Summary of your PRs:",
-      attachments: attachments
+      text: "Summary of *#{username}'s* PRs:",
+      attachments: attachments,
     }
   end
 
