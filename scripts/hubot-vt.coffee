@@ -28,3 +28,16 @@ module.exports = (robot) ->
           text: data.text
         }
         robot.adapter.customMessage msgData
+
+  robot.hear /status (\w+)/i, (resp) ->
+    username = resp.match[1]
+    resp.send "Checking…"
+
+    robot.http("#{SINATRA_ENDPOINT}/stats/#{username}").get() (err, res, body) =>
+      data = JSON.parse(body)
+      msgData = {
+        channel: resp.message.room
+        text: data.text
+        attachments: data.attachments
+      }
+      robot.adapter.customMessage msgData

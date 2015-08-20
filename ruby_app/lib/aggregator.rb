@@ -28,10 +28,11 @@ class Aggregator
   def aggregated_data
     @aggregated_data ||=
       pull_data.map do |pull|
+        assignee = pull[:assignee] ? pull[:assignee][:login] : "Not assigned"
         {
           title:      pull[:title],
           mergeable:  pull[:mergeable] || "Unspecified",
-          assignee:   pull[:assignee] || "Not assigned",
+          assignee:   assignee,
           number:     pull[:number],
           opened_by:  pull[:user][:login],
           html_url:   pull[:html_url],
@@ -46,6 +47,10 @@ class Aggregator
 
   def conflict_stats
     ConflictStats.new(self)
+  end
+
+  def user_stats(user)
+    UserStats.new(self, user)
   end
 
   private
