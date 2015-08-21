@@ -6,7 +6,11 @@ class AllStats
   end
 
   def to_hash
-    { text: summary }
+    if aggregator.open_pulls.count == 0
+      { text: "No open PRs :tada:" }
+    else
+      { text: summary }
+    end
   end
 
   private

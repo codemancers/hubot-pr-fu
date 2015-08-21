@@ -1,5 +1,5 @@
 class UserStats
-  attr_reader :aggregator, :username
+  attr_reader :aggregator, :username, :aggregated_data_for_user
 
   def initialize(aggregator, username)
     @aggregator = aggregator
@@ -7,19 +7,24 @@ class UserStats
   end
 
   def to_hash
-    {
-      text: "Summary of *#{username}'s* PRs:",
-      attachments: attachments,
-    }
+    if aggregated_data_for_user.count == 0
+      { text: "No pending PRs for #{username} :clap:" }
+    else
+      {
+        text: "Summary of *#{username}'s* PRs:",
+        attachments: attachments,
+      }
+    end
+  end
+
+  def aggregated_data_for_user
+    @aggregated_data_for_user ||=
+      aggregator
+        .aggregated_data
+        .select { |x| x[:opened_by].downcase == username.downcase }
   end
 
   private
-
-  def aggregated_data_for_user
-    aggregator
-      .aggregated_data
-      .select { |x| x[:opened_by].downcase == username.downcase }
-  end
 
   def attachments
     aggregated_data_for_user.map do |pull|
@@ -27,6 +32,7 @@ class UserStats
 
       msg_text << "<#{pull[:html_url]}|#{pull[:number]} _#{pull[:title]}_>\n"
       msg_text << "\n"
+
       if !!pull[:mergeable]
         msg_text << "Assigned to: #{pull[:assignee]} \n"
         msg_color = "#14ff2b"

@@ -6,10 +6,14 @@ class ConflictStats
   end
 
   def to_hash
-    {
-      text: "Summary of PRs with conflicts:",
-      attachments: attachments
-    }
+    if aggregator.unmergeable_pulls.count == 0
+      { text: "No unmergeable PRs found :tada:" }
+    else
+      {
+        text: "Summary of PRs with conflicts:",
+        attachments: attachments
+      }
+    end
   end
 
   private
