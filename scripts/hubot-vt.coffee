@@ -31,6 +31,12 @@ module.exports = (robot) ->
 
   robot.hear /status (\w+)/i, (resp) ->
     username = resp.match[1]
+
+    # These cases are already covered by the other commands. Ugly way, but this
+    # will do for now
+    if username == "all" || username == "conflicts" || username == "conflict"
+      return
+
     resp.send "Checking…"
 
     robot.http("#{SINATRA_ENDPOINT}/stats/#{username}").get() (err, res, body) =>
