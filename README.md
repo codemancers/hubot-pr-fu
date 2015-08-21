@@ -214,3 +214,14 @@ Add the subdomain hubot should connect to. If you web URL looks like
 
 You may want to get comfortable with `heroku logs` and `heroku restart` if
 you're having issues.
+
+
+## User specific commands
+
+`status <username>`
+
+The `username` is assumed to be a valid Github username. For now, there
+is no authorization or authentication built-in. Another assumption is
+that a username in lowercase is same as capitalized or camelcased. That
+is, for a username `bootstrap`, the users `Bootstrap`, `bootStrap` are
+the same.
