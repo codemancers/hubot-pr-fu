@@ -33,7 +33,7 @@ class UserStats
       msg_text << "<#{pull[:html_url]}|#{pull[:number]} _#{pull[:title]}_>\n"
       msg_text << "\n"
 
-      if !!pull[:mergeable]
+      if pull[:mergeable] == true
         msg_text << "Assigned to: #{pull[:assignee]} \n"
         msg_color = "#14ff2b"
       else

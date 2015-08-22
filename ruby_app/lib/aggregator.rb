@@ -21,6 +21,9 @@ class Aggregator
     aggregated_data.select { |x| x[:mergeable] == true }
   end
 
+  # We are relying on the assumption that the :mergeable key has true, false or
+  # "Unspecified" as possible values. If we just do !!x[:mergeable], it will
+  # not work.
   def unmergeable_pulls
     aggregated_data.select { |x| x[:mergeable] != true }
   end
