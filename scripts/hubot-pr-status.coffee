@@ -12,7 +12,7 @@ module.exports = (robot) ->
       else
         robot.emit "userStats", { username: command, room: resp.message.room }
 
-  robot.on "allStats", (metadata) ->
+  robot.on "conflictStats", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
     robot.http("#{SINATRA_ENDPOINT}/all_conflicts").get() (err, res, body) =>
       if err
@@ -30,7 +30,7 @@ module.exports = (robot) ->
         robot.adapter.customMessage msgData
 
 
-  robot.on "conflictStats", (metadata) ->
+  robot.on "allStats", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
     robot.http("#{SINATRA_ENDPOINT}/all_stats").get() (err, res, body)  =>
       if err
