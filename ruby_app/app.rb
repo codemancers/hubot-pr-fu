@@ -27,12 +27,18 @@ get '/stats/:user' do
   Aggregator.new.user_stats(params[:user]).to_hash.to_json
 end
 
-get '/merged' do
+get '/merged/:pr_number' do
   content_type "application/json"
-  conflict_stats = Aggregator.new.conflict_stats
+
+  pr_number = params[:pr_number].to_i
+  aggregator = Aggregator.new
+  closed_pr = aggregator.repo.rels[:pulls].get(number: pr_number).data.first
+
+  conflict_stats = aggregator.conflict_stats
 
   if conflict_stats.any_conflicts?
-    text = "A PR was merged; it might've created some merge conflicts"
+    text = "<#{closed_pr[:html_url]}|##{closed_pr[:number]} _#{closed_pr[:title].gsub(/\.$/, '')}_>
+    was merged; it might've created some merge conflicts"
     {
       text: text,
       attachments: conflict_stats.attachments

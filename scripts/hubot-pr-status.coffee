@@ -75,7 +75,7 @@ module.exports = (robot) ->
     pr_number    = data.pull_request.number
 
     if pr_action == "closed" and merge_action == true
-      robot.http("#{SINATRA_ENDPOINT}/merged").get() (err, resp, body) =>
+      robot.http("#{SINATRA_ENDPOINT}/merged/#{pr_number}").get() (err, resp, body) =>
         if err
           robot.send(
             {room: "general"},
