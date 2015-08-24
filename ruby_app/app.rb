@@ -26,3 +26,19 @@ get '/stats/:user' do
 
   Aggregator.new.user_stats(params[:user]).to_hash.to_json
 end
+
+get '/merged' do
+  content_type "application/json"
+  conflict_stats = Aggregator.new.conflict_stats
+
+  if conflict_stats.any_conflicts?
+    text = "A PR was merged; it might've created some merge conflicts"
+    {
+      text: text,
+      attachments: conflict_stats.attachments
+    }.to_json
+  else
+    status 302
+    {}.to_json
+  end
+end
