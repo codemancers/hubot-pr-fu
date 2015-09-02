@@ -1,4 +1,5 @@
 SINATRA_ENDPOINT = "http://localhost:4567"
+BOT_NAME = process.env.HUBOT_SLACK_BOT_NAME
 
 module.exports = (robot) ->
   # Matches:
@@ -22,7 +23,7 @@ module.exports = (robot) ->
   # status all <garbage>
   #
   # Test: http://rubular.com/r/ZIZsNV1J6U
-  robot.hear /^(?:bot |@bot )?status (\w+)$/, (resp) ->
+  robot.hear ///^(?:#{BOT_NAME}\u0020|@#{BOT_NAME}\u0020)?status\u0020(\w+)$///, (resp) ->
     command = resp.match[1]
 
     switch command
