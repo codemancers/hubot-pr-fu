@@ -57,8 +57,12 @@ Adding a way to make this better is in the works.
 Some env vars are assumed to exist:
 
 * HUBOT_SLACK_TOKEN (Get this from Slack account page)
-* HUBOT_SLACK_BOT_NAME
   [Read this for steps to obtain a slack token and set the bot name]( #getting-a-slack-token )
+* HUBOT_SLACK_BOT_NAME
+  The name of the bot is necessary to build the regex required for
+  parsing commands that are prefixed by the bot name. For example:
+  `@bot status all` or `bot status all`. [Refer to the token generation
+  steps](#getting-a-slack-token) to know the name of the bot.
 * GH_AUTH_TOKEN (Get this from Github)
 * HUBOT_VT_GITHUB_ORG
 * HUBOT_VT_GITHUB_REPO
@@ -83,5 +87,3 @@ An example script is included at `scripts/example.coffee`, so check it out to
 get started, along with the [Scripting Guide](scripting-docs).
 
 [scripting-docs]: https://github.com/github/hubot/blob/master/docs/scripting.md
-
-
