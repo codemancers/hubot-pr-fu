@@ -57,6 +57,8 @@ Adding a way to make this better is in the works.
 Some env vars are assumed to exist:
 
 * HUBOT_SLACK_TOKEN (Get this from Slack account page)
+* HUBOT_SLACK_BOT_NAME
+  [Read this for steps to obtain a slack token and set the bot name]( #getting-a-slack-token )
 * GH_AUTH_TOKEN (Get this from Github)
 * HUBOT_VT_GITHUB_ORG
 * HUBOT_VT_GITHUB_REPO
@@ -65,6 +67,15 @@ The `org` and `repo` are the username or organization name and the
 repository's name respectively. These have to be added to the
 environment based on which project you want to configure the robot to
 work with.
+
+#### Getting a Slack Token
+1. Signin into Slack via https://slack.com/signin
+2. Head to https://<teamname>.slack.com/services/new/bot
+3. Register a new bot with whatever name you want
+4. Save the service, and you'll be shown the API key. Grab this key and
+   set it to `HUBOT_SLACK_TOKEN`
+5. Set the `HUBOT_SLACK_BOT_NAME` to the name you set in the services
+   page.
 
 ### Contribution
 
