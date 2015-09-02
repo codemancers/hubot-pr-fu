@@ -21,11 +21,8 @@ class Aggregator
     aggregated_data.select { |x| x[:mergeable] == true }
   end
 
-  # We are relying on the assumption that the :mergeable key has true, false or
-  # "Unspecified" as possible values. If we just do !!x[:mergeable], it will
-  # not work.
   def unmergeable_pulls
-    aggregated_data.select { |x| x[:mergeable] != true }
+    aggregated_data.select { |x| x[:mergeable] == false }
   end
 
   def aggregated_data
@@ -34,7 +31,7 @@ class Aggregator
         assignee = pull[:assignee] ? pull[:assignee][:login] : "Not assigned"
         {
           title:      pull[:title],
-          mergeable:  pull[:mergeable] || "Unspecified",
+          mergeable:  pull[:mergeable],
           assignee:   assignee,
           number:     pull[:number],
           opened_by:  pull[:user][:login],
