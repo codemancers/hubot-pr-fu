@@ -13,6 +13,6 @@
     "coffee-script": "1.9.3"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.12.x"
   }
 }
