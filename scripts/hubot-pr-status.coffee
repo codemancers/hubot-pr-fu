@@ -1,7 +1,28 @@
 SINATRA_ENDPOINT = "http://localhost:4567"
 
 module.exports = (robot) ->
-  robot.hear /status (\w+)/i, (resp) ->
+  # Matches:
+  #
+  # @bot status all
+  # bot status all
+  # status all
+  #
+  # Doesn't match:
+  #
+  # <garbage> @bot status all <garbage>
+  # <garbage> bot status all <garbage>
+  # <garbage> status all <garbage>
+  #
+  # <garbage> @bot status all
+  # <garbage> bot status all
+  # <garbage> status all
+  #
+  # @bot status all <garbage>
+  # bot status all <garbage>
+  # status all <garbage>
+  #
+  # Test: http://rubular.com/r/ZIZsNV1J6U
+  robot.hear /^(?:bot |@bot )?status (\w+)$/, (resp) ->
     command = resp.match[1]
 
     switch command
