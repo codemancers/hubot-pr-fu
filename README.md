@@ -25,6 +25,18 @@ In another window:
 
     % bin/hubot -a slack
 
+### Notes
+
+* There might be some inconsistency with determining the conflict of
+  PRs. GitHub's API returns a `mergeable` key in the response that has
+  three possible states: `true`, `false` and `nil`. `nil` state means
+  that the mergeability of that PR has not yet been determined, and a
+  background job has been scheduled. For reasons of making the logic
+  simpler, we don't display information about these `nil` state PRs. So
+  there might be a rare case where the total number of PRs in `status
+  all` command doesn't match with the sum of mergeable PRs and
+  non-mergeable PRs in the same command's response.
+
 ### Commands/Features
 
 #### User specific commands
