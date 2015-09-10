@@ -33,8 +33,6 @@ module.exports = (robot) ->
     switch command
       when "all"
         robot.emit "allStats", { room: resp.message.room }
-      when "allnew"
-        robot.emit "allNewStats", { room: resp.message.room }
       when "conflicts" || "conflict"
         robot.emit "conflictStats", { room: resp.message.room }
       when "help"
@@ -107,30 +105,16 @@ module.exports = (robot) ->
         }
         robot.adapter.customMessage msgData
 
-
   robot.on "allStats", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
-    robot.http("#{SINATRA_ENDPOINT}/all_stats").get() (err, res, body)  =>
-      if err
-        robot.send(
-          {room: metadata.room},
-          "Unable to contact Github API or something went wrong"
-        )
-      else
-        data = JSON.parse(body)
-        msgData = {
-          channel: metadata.room
-          text: data.text
-        }
-        robot.adapter.customMessage msgData
 
-  robot.on "allNewStats", (metadata) ->
-    robot.send {room: metadata.room}, "Checking…"
     allStats = new AllStats()
-    allStats.generateSummary((summary) =>
-      robot.send { room: metadata.room }, summary
-    )
-
+    allStats.generateSummary().then (summary) =>
+      msgData = {
+        channel: metadata.room
+        text: summary
+      }
+      robot.adapter.customMessage msgData
 
   robot.on "userStats", (metadata) ->
     username = metadata.username

@@ -1,51 +1,56 @@
-Github   = require 'github-api'
-_        = require 'underscore'
+Octokat = require 'octokat'
+_       = require 'underscore'
+Q       = require 'q'
 
 class AllStats
+  # For some reason, calling @fetchAllPrs() in the constructor doesn't seem to
+  # work, where fetchAllPrs()'s functionality is to populate the @allPrs
+  # variable
   constructor: ->
-    @github = new Github({
-      token: process.env.GH_AUTH_TOKEN,
-      auth: 'oauth'
-    })
+    github = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
-    @repo = @github.getRepo(
+    repo = github.repos(
       process.env.HUBOT_VT_GITHUB_ORG,
-        process.env.HUBOT_VT_GITHUB_REPO
+      process.env.HUBOT_VT_GITHUB_REPO
     )
 
-  generateSummary: (fn) ->
-    @repo.listPulls(
-      "open",
-      (err, pullRequests) ->
-        stats = "Summary of all open PRs\n\n"
-        stats += "#{pullRequests.length} open PRs\n"
-        stats += "\n"
+    @allPrs =
+      repo.pulls.fetch({status: "open"}).then (prs) =>
+        Q.all _.map(prs, (pr) => repo.pulls(pr.number).fetch())
 
-        prsGroupedByUser =
-          _.groupBy(pullRequests, (prHash) -> prHash.user.login)
+  mergeablePrs: (prs) ->
+    _.filter(prs, (pr) -> pr.mergeable == true)
 
-        _.each(
-          prsGroupedByUser,
-          (prs, user) =>
-            linksToPrs = _.map(prs, (pr) -> "<#{pr.html_url}|##{pr.number}>")
-            stats += "#{prs.length} by #{user}: #{linksToPrs.join(", ")}"
-        )
+  unMergeablePrs: (prs) ->
+    _.filter(prs, (pr) -> pr.mergeable == false)
 
-        mergeablePulls =
-          _.filter(pullRequests, (pr) -> pr.mergeable == true )
+  prsGroupedByUser: (prs) ->
+    _.groupBy(prs, (pr) -> pr.user.login)
 
-        unmergeablePulls =
-          _.filter(pullRequests, (pr) -> pr.mergeable == false )
+  generateSummary: ->
+    @allPrs.then (prs) =>
+      mergeablePrCount   = @mergeablePrs(prs).length
+      unMergeablePrCount = @unMergeablePrs(prs).length
 
-        stats += "\n"
-        stats += "#{mergeablePulls.length} mergeable\n"
-        stats += "#{unmergeablePulls.length} unmergeable\n"
-        stats += "\n"
-        stats += "Run `status conflicts` to know details about unmergeable pulls"
-        stats += "\n"
-        fn(stats)
-    )
+      stats = "Summary of all open PRs\n\n"
+      stats += "#{prs.length} open PRs\n"
+      stats += "\n"
 
+      _.each(
+        @prsGroupedByUser(prs),
+        (prs, user) =>
+          linksToPrs = _.map(
+            prs,
+            (pr) -> "<#{pr.Links.html.href}|##{pr.number}>"
+          )
+          stats += "#{prs.length} by #{user}: #{linksToPrs.join(", ")}\n"
+      )
 
+      stats += "\n"
+      stats += "#{mergeablePrCount} mergeable\n"
+      stats += "#{unMergeablePrCount} unmergeable\n"
+      stats += "\n"
+      stats += "Run `status conflicts` to know details about unmergeable pulls"
+      stats += "\n"
 
 module.exports = AllStats
