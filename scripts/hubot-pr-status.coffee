@@ -1,7 +1,11 @@
+AllStats = require("./allstats.coffee")
+
 SINATRA_ENDPOINT = "http://localhost:4567"
 BOT_NAME = process.env.HUBOT_SLACK_BOT_NAME
 
+
 module.exports = (robot) ->
+
   # Matches:
   #
   # @bot status all
@@ -29,6 +33,8 @@ module.exports = (robot) ->
     switch command
       when "all"
         robot.emit "allStats", { room: resp.message.room }
+      when "allnew"
+        robot.emit "allNewStats", { room: resp.message.room }
       when "conflicts" || "conflict"
         robot.emit "conflictStats", { room: resp.message.room }
       when "help"
@@ -117,6 +123,14 @@ module.exports = (robot) ->
           text: data.text
         }
         robot.adapter.customMessage msgData
+
+  robot.on "allNewStats", (metadata) ->
+    robot.send {room: metadata.room}, "Checking…"
+    allStats = new AllStats()
+    allStats.generateSummary((summary) =>
+      robot.send { room: metadata.room }, summary
+    )
+
 
   robot.on "userStats", (metadata) ->
     username = metadata.username
