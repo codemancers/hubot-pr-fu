@@ -29,7 +29,7 @@ module.exports = (robot) ->
     switch command
       when "all"
         robot.emit "StatusAll", { room: resp.message.room }
-      when "conflicts" || "conflict"
+      when "conflicts", "conflict"
         robot.emit "StatusConflicts", { room: resp.message.room }
       when "help"
         robot.emit "help", { room: resp.message.room }
