@@ -1,6 +1,7 @@
 StatusAll       = require("./status_all.coffee")
 StatusConflicts = require("./status_conflicts.coffee")
 StatusUser      = require("./status_user.coffee")
+PostMergeHook   = require("./post_merge_hook.coffee")
 
 SINATRA_ENDPOINT = "http://localhost:4567"
 
@@ -134,22 +135,20 @@ module.exports = (robot) ->
     pr_number    = data.pull_request.number
 
     if pr_action == "closed" and merge_action == true
-      robot.http("#{SINATRA_ENDPOINT}/merged/#{pr_number}").get() (err, resp, body) =>
-        if err
-          robot.send(
-            {room: "general"},
-            "Unable to contact Github API or something went wrong"
-          )
+      postMergeHook = new PostMergeHook(pr_number)
+      postMergeHook.generateMessage().then (message) =>
+        if message.attachments
+          msgData = {
+            channel: "general"
+            text: message.text
+            attachments: message.attachments
+          }
         else
-          # If there are no conflicts, don't do anything
-          if resp.statusCode != 302
-            data = JSON.parse(body)
-            msgData = {
-              channel: "general"
-              text: data.text
-              attachments: data.attachments
-            }
+          msgData = {
+            channel: "general"
+            text: message.text
+          }
 
-            robot.adapter.customMessage msgData
+        robot.adapter.customMessage msgData
 
     res.send "OK"
