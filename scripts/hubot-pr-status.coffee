@@ -1,8 +1,8 @@
 StatusAll       = require("./status_all.coffee")
 StatusConflicts = require("./status_conflicts.coffee")
+StatusUser      = require("./status_user.coffee")
 
 SINATRA_ENDPOINT = "http://localhost:4567"
-
 
 module.exports = (robot) ->
 
@@ -34,7 +34,7 @@ module.exports = (robot) ->
       when "help"
         robot.emit "help", { room: resp.message.room }
       else
-        robot.emit "userStats", { username: command, room: resp.message.room }
+        robot.emit "StatusUser", { username: command, room: resp.message.room }
 
   robot.on "help", (metadata) ->
     message = {
@@ -96,6 +96,18 @@ module.exports = (robot) ->
       }
       robot.adapter.customMessage msgData
 
+  robot.on "StatusUser", (metadata) ->
+    robot.send {room: metadata.room}, "Checking…"
+
+    statusUser = new StatusUser(metadata.username)
+    statusUser.generateMessage().then (message) =>
+      msgData = {
+        channel: metadata.room
+        text: message.text
+        attachments: message.attachments
+      }
+      robot.adapter.customMessage msgData
+
   robot.on "StatusAll", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
@@ -106,25 +118,6 @@ module.exports = (robot) ->
         text: summary
       }
       robot.adapter.customMessage msgData
-
-  robot.on "userStats", (metadata) ->
-    username = metadata.username
-
-    robot.send {room: metadata.room}, "Checking…"
-    robot.http("#{SINATRA_ENDPOINT}/stats/#{username}").get() (err, res, body) =>
-      if err
-        robot.send(
-          {room: metadata.room},
-          "Unable to contact Github API or something went wrong"
-        )
-      else
-        data = JSON.parse(body)
-        msgData = {
-          channel: metadata.room
-          text: data.text
-          attachments: data.attachments
-        }
-        robot.adapter.customMessage msgData
 
   robot.router.post '/hubot/hook', (req, res) ->
     data   = if req.body.payload? then JSON.parse req.body.payload else req.body
