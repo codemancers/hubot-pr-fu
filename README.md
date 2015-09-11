@@ -77,10 +77,6 @@ Some env vars are assumed to exist:
 
 * HUBOT_SLACK_TOKEN (Get this from Slack account page)
   [Read this for steps to obtain a slack token and set the bot name]( #getting-a-slack-token )
-* HUBOT_SLACK_BOT_NAME
-  The name of the bot is necessary to build the regex required for
-  parsing commands that are prefixed by the bot name. For example:
-  `@bot status all` or `bot status all`. [Refer to the token generation
   steps](#getting-a-slack-token) to know the name of the bot.
 * GH_AUTH_TOKEN (Get this from Github)
 * HUBOT_VT_GITHUB_ORG
@@ -97,8 +93,6 @@ work with.
 3. Register a new bot with whatever name you want
 4. Save the service, and you'll be shown the API key. Grab this key and
    set it to `HUBOT_SLACK_TOKEN`
-5. Set the `HUBOT_SLACK_BOT_NAME` to the name you set in the services
-   page.
 
 ### Contribution
 
