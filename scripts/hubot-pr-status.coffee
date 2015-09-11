@@ -1,4 +1,5 @@
-StatusAll = require("./status_all.coffee")
+StatusAll       = require("./status_all.coffee")
+StatusConflicts = require("./status_conflicts.coffee")
 
 SINATRA_ENDPOINT = "http://localhost:4567"
 
@@ -29,7 +30,7 @@ module.exports = (robot) ->
       when "all"
         robot.emit "StatusAll", { room: resp.message.room }
       when "conflicts" || "conflict"
-        robot.emit "conflictStats", { room: resp.message.room }
+        robot.emit "StatusConflicts", { room: resp.message.room }
       when "help"
         robot.emit "help", { room: resp.message.room }
       else
@@ -83,22 +84,17 @@ module.exports = (robot) ->
     }
     robot.adapter.customMessage message
 
-  robot.on "conflictStats", (metadata) ->
+  robot.on "StatusConflicts", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
-    robot.http("#{SINATRA_ENDPOINT}/all_conflicts").get() (err, res, body) =>
-      if err
-        robot.send(
-          {room: metadata.room},
-          "Unable to contact Github API or something went wrong"
-        )
-      else
-        data = JSON.parse(body)
-        msgData = {
-          channel: metadata.room
-          text: data.text
-          attachments: data.attachments
-        }
-        robot.adapter.customMessage msgData
+
+    statusConflicts = new StatusConflicts()
+    statusConflicts.generateMessage().then (message) =>
+      msgData = {
+        channel: metadata.room
+        text: message.text
+        attachments: message.attachments
+      }
+      robot.adapter.customMessage msgData
 
   robot.on "StatusAll", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
