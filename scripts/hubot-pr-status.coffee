@@ -1,6 +1,10 @@
+AllStats = require("./allstats.coffee")
+
 SINATRA_ENDPOINT = "http://localhost:4567"
 
+
 module.exports = (robot) ->
+
   # Matches:
   #
   # @bot status all
@@ -96,22 +100,16 @@ module.exports = (robot) ->
         }
         robot.adapter.customMessage msgData
 
-
   robot.on "allStats", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
-    robot.http("#{SINATRA_ENDPOINT}/all_stats").get() (err, res, body)  =>
-      if err
-        robot.send(
-          {room: metadata.room},
-          "Unable to contact Github API or something went wrong"
-        )
-      else
-        data = JSON.parse(body)
-        msgData = {
-          channel: metadata.room
-          text: data.text
-        }
-        robot.adapter.customMessage msgData
+
+    allStats = new AllStats()
+    allStats.generateSummary().then (summary) =>
+      msgData = {
+        channel: metadata.room
+        text: summary
+      }
+      robot.adapter.customMessage msgData
 
   robot.on "userStats", (metadata) ->
     username = metadata.username

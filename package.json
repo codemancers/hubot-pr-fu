@@ -7,6 +7,8 @@
   "dependencies": {
     "hubot": "2.5.5",
     "hubot-slack": "^3.3.0",
+    "octokat": "^0.4.11",
+    "q": "^1.4.1",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
