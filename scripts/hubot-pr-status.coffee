@@ -1,4 +1,4 @@
-AllStats = require("./allstats.coffee")
+StatusAll = require("./status_all.coffee")
 
 SINATRA_ENDPOINT = "http://localhost:4567"
 
@@ -27,7 +27,7 @@ module.exports = (robot) ->
 
     switch command
       when "all"
-        robot.emit "allStats", { room: resp.message.room }
+        robot.emit "StatusAll", { room: resp.message.room }
       when "conflicts" || "conflict"
         robot.emit "conflictStats", { room: resp.message.room }
       when "help"
@@ -100,11 +100,11 @@ module.exports = (robot) ->
         }
         robot.adapter.customMessage msgData
 
-  robot.on "allStats", (metadata) ->
+  robot.on "StatusAll", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    allStats = new AllStats()
-    allStats.generateSummary().then (summary) =>
+    statusAll = new StatusAll()
+    statusAll.generateSummary().then (summary) =>
       msgData = {
         channel: metadata.room
         text: summary

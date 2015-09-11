@@ -2,7 +2,7 @@ Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
 
-class AllStats
+class StatusAll
   # For some reason, calling @fetchAllPrs() in the constructor doesn't seem to
   # work, where fetchAllPrs()'s functionality is to populate the @allPrs
   # variable
@@ -53,4 +53,4 @@ class AllStats
       stats += "Run `status conflicts` to know details about unmergeable pulls"
       stats += "\n"
 
-module.exports = AllStats
+module.exports = StatusAll
