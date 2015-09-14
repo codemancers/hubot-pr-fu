@@ -137,17 +137,11 @@ module.exports = (robot) ->
     if pr_action == "closed" and merge_action == true
       postMergeHook = new PostMergeHook(pr_number)
       postMergeHook.generateMessage().then (message) =>
-        if message.attachments
-          msgData = {
-            channel: "general"
-            text: message.text
-            attachments: message.attachments
-          }
-        else
-          msgData = {
-            channel: "general"
-            text: message.text
-          }
+        msgData = {
+          channel: "general"
+          text: message.text
+          attachments: message.attachments
+        }
 
         robot.adapter.customMessage msgData
 
