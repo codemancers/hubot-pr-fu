@@ -20,28 +20,29 @@ class StatusConflicts
 
   generateMessage: ->
     @allPrs.then (prs) =>
-      text = "Summary of Prs with conflicts"
+      if @unMergeablePrs(prs).length > 0
+        attachments = _.map(
+          @unMergeablePrs(prs),
+          (pr) =>
+            assignee = if pr.assignee then pr.assignee.login else "Not assigned"
 
-      attachments = _.map(
-        @unMergeablePrs(prs),
-        (pr) =>
-          assignee = if pr.assignee then pr.assignee.login else "Not assigned"
+            stats = ""
+            stats += "<#{pr.Links.html.href}|##{pr.number} _#{pr.title}_> has a conflict"
+            stats += "\n"
+            stats += "Assigned to: #{assignee}; Opened by: #{pr.user.login}\n"
 
-          stats = ""
-          stats += "<#{pr.Links.html.href}|##{pr.number} _#{pr.title}_> has a conflict"
-          stats += "\n"
-          stats += "Assigned to: #{assignee}; Opened by: #{pr.user.login}\n"
+            {
+              text: stats
+              color: "#ff0000"
+              mrkdwn_in: ["text"]
+            }
+        )
 
-          {
-            text: stats
-            color: "#ff0000"
-            mrkdwn_in: ["text"]
-          }
-      )
-
-      {
-        text: text
-        attachments: attachments
-      }
+        {
+          text:  "Summary of Prs with conflicts:"
+          attachments: attachments
+        }
+      else
+        { text: "No unmergeable PRs found :tada:" }
 
 module.exports = StatusConflicts

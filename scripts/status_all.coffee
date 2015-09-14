@@ -27,30 +27,47 @@ class StatusAll
   prsGroupedByUser: (prs) ->
     _.groupBy(prs, (pr) -> pr.user.login)
 
+  # Returns a string in the following format:
+  #
+  #  Summary of all open PRs:
+  #
+  #  11 open PRs
+  #
+  #  6 by user1
+  #  2 by user2
+  #  3 by user3
+  #
+  #  10 mergeable
+  #  1 unmergeable
+  #
+  #  Run `status conflicts` to know details about unmergeable pulls
   generateSummary: ->
     @allPrs.then (prs) =>
-      mergeablePrCount   = @mergeablePrs(prs).length
-      unMergeablePrCount = @unMergeablePrs(prs).length
+      if prs.length > 0
+        mergeablePrCount   = @mergeablePrs(prs).length
+        unMergeablePrCount = @unMergeablePrs(prs).length
 
-      stats = "Summary of all open PRs\n\n"
-      stats += "#{prs.length} open PRs\n"
-      stats += "\n"
+        stats = "Summary of all open PRs\n\n"
+        stats += "#{prs.length} open PRs\n"
+        stats += "\n"
 
-      _.each(
-        @prsGroupedByUser(prs),
-        (prs, user) =>
-          linksToPrs = _.map(
-            prs,
-            (pr) -> "<#{pr.Links.html.href}|##{pr.number}>"
-          )
-          stats += "#{prs.length} by #{user}: #{linksToPrs.join(", ")}\n"
-      )
+        _.each(
+          @prsGroupedByUser(prs),
+          (prs, user) =>
+            linksToPrs = _.map(
+              prs,
+              (pr) -> "<#{pr.Links.html.href}|##{pr.number}>"
+            )
+            stats += "#{prs.length} by #{user}: #{linksToPrs.join(", ")}\n"
+        )
 
-      stats += "\n"
-      stats += "#{mergeablePrCount} mergeable\n"
-      stats += "#{unMergeablePrCount} unmergeable\n"
-      stats += "\n"
-      stats += "Run `status conflicts` to know details about unmergeable pulls"
-      stats += "\n"
+        stats += "\n"
+        stats += "#{mergeablePrCount} mergeable\n"
+        stats += "#{unMergeablePrCount} unmergeable\n"
+        stats += "\n"
+        stats += "Run `status conflicts` to know details about unmergeable pulls"
+        stats += "\n"
+      else
+        stats = "No open PRs :tada:"
 
 module.exports = StatusAll

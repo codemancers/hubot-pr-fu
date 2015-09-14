@@ -25,34 +25,36 @@ class StatusUser
 
   generateMessage: ->
     @allPrs.then (prs) =>
-      text = "Summary of Prs by #{@username}"
 
-      attachments = _.map(
-        @prsByUser(prs),
-        (pr) =>
-          assignee = if pr.assignee then pr.assignee.login else "Not assigned"
+      if @prsByUser(prs) > 0
+        attachments = _.map(
+          @prsByUser(prs),
+          (pr) =>
+            assignee = if pr.assignee then pr.assignee.login else "Not assigned"
 
-          stats = ""
-          stats += "<#{pr.Links.html.href}|##{pr.number} _#{pr.title}_>"
-          stats += "\n"
+            stats = ""
+            stats += "<#{pr.Links.html.href}|##{pr.number} _#{pr.title}_>"
+            stats += "\n"
 
-          if pr.mergeable == true
-            stats += "Assigned to: #{assignee}\n"
-            msgColor = "#14ff2b"
-          else
-            stats += "Assigned to: #{assignee}; Unmergeable\n"
-            msgColor = "#ff0000"
+            if pr.mergeable == true
+              stats += "Assigned to: #{assignee}\n"
+              msgColor = "#14ff2b"
+            else
+              stats += "Assigned to: #{assignee}; Unmergeable\n"
+              msgColor = "#ff0000"
 
-          {
-            text: stats
-            color: msgColor
-            mrkdwn_in: ["text"]
-          }
-      )
+            {
+              text: stats
+              color: msgColor
+              mrkdwn_in: ["text"]
+            }
+        )
 
-      {
-        text: text
-        attachments: attachments
-      }
+        {
+          text: "Summary of *#{@username}'s'* PRs:"
+          attachments: attachments
+        }
+      else
+        { text: "No pending PRs for #{@username} :clap:"}
 
 module.exports = StatusUser

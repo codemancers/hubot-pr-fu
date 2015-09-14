@@ -89,6 +89,8 @@ module.exports = (robot) ->
 
     statusConflicts = new StatusConflicts()
     statusConflicts.generateMessage().then (message) =>
+      # Slack ignores empty array for attachments, so this works even if the
+      # message doesn't have any attachments
       msgData = {
         channel: metadata.room
         text: message.text
@@ -101,11 +103,14 @@ module.exports = (robot) ->
 
     statusUser = new StatusUser(metadata.username)
     statusUser.generateMessage().then (message) =>
+      # Slack ignores empty array for attachments, so this works even if the
+      # message doesn't have any attachments
       msgData = {
         channel: metadata.room
         text: message.text
         attachments: message.attachments
       }
+
       robot.adapter.customMessage msgData
 
   robot.on "StatusAll", (metadata) ->
