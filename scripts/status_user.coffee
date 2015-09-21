@@ -25,10 +25,11 @@ class StatusUser
 
   generateMessage: ->
     @allPrs.then (prs) =>
+      prsByUser = @prsByUser(prs)
 
-      if @prsByUser(prs) > 0
+      if prsByUser.length > 0
         attachments = _.map(
-          @prsByUser(prs),
+          prsByUser,
           (pr) =>
             assignee = if pr.assignee then pr.assignee.login else "Not assigned"
 
