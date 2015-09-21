@@ -20,7 +20,7 @@
   "bin": {
     "hubot": ".bin/hubot"
   },
-  "main": "./scripts/hubot-pr-status",
+  "main": "index.coffee",
   "license": "MIT",
   "repository": {
     "type": "git",
