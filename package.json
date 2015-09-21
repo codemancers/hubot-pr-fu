@@ -16,5 +16,14 @@
   },
   "engines": {
     "node": "0.12.x"
+  },
+  "bin": {
+    "hubot": ".bin/hubot"
+  },
+  "main": "./scripts/hubot-pr-status",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/code-mancers/hubot-pr-status.git"
   }
 }
