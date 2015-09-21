@@ -26,24 +26,24 @@ class PostMergeHook
     conflictsMessage = new StatusConflicts().generateMessage()
 
     Q.allSettled([@getClosedPrDetails(), @allPrs, conflictsMessage])
-      .then (results) =>
-        closedPr = results[0].value
-        allPrs   = results[1].value
-        message  = results[2].value
+     .then (results) =>
+       closedPr = results[0].value
+       allPrs   = results[1].value
+       message  = results[2].value
 
-        if @unMergeablePrs(allPrs).length
-          text = "
-            <#{closedPr.Links.html.href}|##{closedPr.number} _#{closedPr.title}_>
-            was merged; it might've created some merge conflicts
-          "
+       if @unMergeablePrs(allPrs).length
+         text = "
+           <#{closedPr.Links.html.href}|##{closedPr.number} _#{closedPr.title}_>
+           was merged; it might've created some merge conflicts
+         "
 
-          {
-            text: text
-            attachments: message.attachments
-          }
-        else
-          {
-            text: "A PR was closed; didn't create any conflicts 👍🏽"
-          }
+         {
+           text: text
+           attachments: message.attachments
+         }
+       else
+         {
+           text: "A PR was closed; didn't create any conflicts 👍🏽"
+         }
 
 module.exports = PostMergeHook
