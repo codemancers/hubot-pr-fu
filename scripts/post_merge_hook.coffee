@@ -33,17 +33,15 @@ class PostMergeHook
 
        if @unMergeablePrs(allPrs).length
          text = "
-           <#{closedPr.Links.html.href}|##{closedPr.number} _#{closedPr.title}_>
-           was merged; it might've created some merge conflicts
-         "
-
+           There are merge conflicts. Run `@bot status conflicts` for more info
+           "
          {
            text: text
            attachments: message.attachments
          }
        else
          {
-           text: "A PR was closed; didn't create any conflicts 👍🏽"
+           text: "No conflicts 👍🏽"
          }
 
 module.exports = PostMergeHook
