@@ -1,7 +1,3 @@
-Octokat = require 'octokat'
-_       = require 'underscore'
-Q       = require 'q'
-
 class StatusAll
   # For some reason, calling @fetchAllPrs() in the constructor doesn't seem to
   # work, where fetchAllPrs()'s functionality is to populate the @allPrs

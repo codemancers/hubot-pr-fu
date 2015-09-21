@@ -1,7 +1,3 @@
-Octokat = require 'octokat'
-_       = require 'underscore'
-Q       = require 'q'
-
 class StatusUser
   constructor: (@username) ->
     github    = new Octokat(token: process.env.GH_AUTH_TOKEN)

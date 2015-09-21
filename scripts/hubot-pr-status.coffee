@@ -1,8 +1,3 @@
-StatusAll       = require("./status_all.coffee")
-StatusConflicts = require("./status_conflicts.coffee")
-StatusUser      = require("./status_user.coffee")
-PostMergeHook   = require("./post_merge_hook.coffee")
-
 module.exports = (robot) ->
 
   # Matches:

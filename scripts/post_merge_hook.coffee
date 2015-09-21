@@ -1,8 +1,3 @@
-Octokat = require 'octokat'
-_       = require 'underscore'
-Q       = require 'q'
-StatusConflicts = require './status_conflicts'
-
 class PostMergeHook
   constructor: (@prNumber) ->
     github    = new Octokat(token: process.env.GH_AUTH_TOKEN)
