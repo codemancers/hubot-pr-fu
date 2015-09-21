@@ -1,6 +1,7 @@
 StatusAll       = require("./status_all.coffee")
 StatusConflicts = require("./status_conflicts.coffee")
 StatusUser      = require("./status_user.coffee")
+PostMergeHook   = require("./post_merge_hook.coffee")
 
 SINATRA_ENDPOINT = "http://localhost:4567"
 
@@ -130,26 +131,27 @@ module.exports = (robot) ->
     # everytime a PR is closed and merged. The `merged` key gives us the second
     # piece of information.
     pr_action    = data.action
-    merge_action = data.pull_request.merged
-    pr_number    = data.pull_request.number
+    closedPr     = data.pull_request
+    merge_action = closedPr.merged
+    pr_number    = closedPr.number
 
     if pr_action == "closed" and merge_action == true
-      robot.http("#{SINATRA_ENDPOINT}/merged/#{pr_number}").get() (err, resp, body) =>
-        if err
-          robot.send(
-            {room: "general"},
-            "Unable to contact Github API or something went wrong"
-          )
-        else
-          # If there are no conflicts, don't do anything
-          if resp.statusCode != 302
-            data = JSON.parse(body)
-            msgData = {
-              channel: "general"
-              text: data.text
-              attachments: data.attachments
-            }
+      msgData = {
+        channel: "general"
+        text: "<#{closedPr.html_url}|##{closedPr.number} _#{closedPr.title}_>
+        got merged; checking to see if it created any conflicts…"
+        mrkdwn_in: ["text"]
+      }
+      robot.adapter.customMessage msgData
 
-            robot.adapter.customMessage msgData
+      postMergeHook = new PostMergeHook(pr_number)
+      postMergeHook.generateMessage().then (message) =>
+        msgData = {
+          channel: "general"
+          text: message.text
+          attachments: message.attachments
+        }
+
+        robot.adapter.customMessage msgData
 
     res.send "OK"
