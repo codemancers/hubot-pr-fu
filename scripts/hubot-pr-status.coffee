@@ -3,8 +3,6 @@ StatusConflicts = require("./status_conflicts.coffee")
 StatusUser      = require("./status_user.coffee")
 PostMergeHook   = require("./post_merge_hook.coffee")
 
-SINATRA_ENDPOINT = "http://localhost:4567"
-
 module.exports = (robot) ->
 
   # Matches:
