@@ -1,8 +1,5 @@
 fs = require 'fs'
 path = require 'path'
-Octokat = require 'octokat'
-_       = require 'underscore'
-Q       = require 'q'
 
 module.exports = (robot, scripts) ->
   scriptsPath = path.resolve(__dirname, 'scripts')
