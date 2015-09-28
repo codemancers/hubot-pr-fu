@@ -8,8 +8,8 @@ class PostMergeHook
     github    = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
     @repo = github.repos(
-      process.env.HUBOT_VT_GITHUB_ORG,
-      process.env.HUBOT_VT_GITHUB_REPO
+      process.env.PR_STATUS_GITHUB_ORG,
+      process.env.PR_STATUS_GITHUB_REPO
     )
 
     @allPrs =
