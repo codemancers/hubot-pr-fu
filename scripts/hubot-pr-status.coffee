@@ -22,7 +22,7 @@ module.exports = (robot) ->
   # bot status all <garbage>
   #
   # Test: http://rubular.com/r/ZIZsNV1J6U
-  robot.respond /status\u0020(\w+)/, (resp) ->
+  robot.respond /pr\u0020(\w+)/, (resp) ->
     command = resp.match[1]
 
     switch command
@@ -42,7 +42,7 @@ module.exports = (robot) ->
       attachments: [
         {
           text: "
-          `status all`\n\n
+          `pr all`\n\n
 
           This command returns the PR stats for the repo viz., total open PRs,
           their mergeability status, and links to those PRs.
@@ -51,7 +51,7 @@ module.exports = (robot) ->
         },
         {
           text: "
-          `status conflicts`\n\n
+          `pr conflicts`\n\n
 
           This command returns all the PRs which have merge conflicts. This has
           more detailed information for those compared to `status all` command.
@@ -62,7 +62,7 @@ module.exports = (robot) ->
         },
         {
           text: "
-          `status help`\n\n
+          `pr help`\n\n
 
           Prints out this help text
           ",
@@ -70,7 +70,7 @@ module.exports = (robot) ->
         },
         {
           text: "
-          `status kgrz`\n\n
+          `pr kgrz`\n\n
 
           This command returns all the PRs opened by this user. This includes
           all open PRs which are mergeable and non-mergeable. The `username` is

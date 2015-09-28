@@ -40,7 +40,7 @@ class StatusAll
   #  10 mergeable
   #  1 unmergeable
   #
-  #  Run `status conflicts` to know details about unmergeable pulls
+  #  Run `pr conflicts` to know details about unmergeable pulls
   generateSummary: ->
     @allPrs.then (prs) =>
       if prs.length > 0
@@ -65,7 +65,7 @@ class StatusAll
         stats += "#{mergeablePrCount} mergeable\n"
         stats += "#{unMergeablePrCount} unmergeable\n"
         stats += "\n"
-        stats += "Run `@bot status conflicts` to know details about unmergeable pulls"
+        stats += "Run `@bot pr conflicts` to know details about unmergeable pulls"
         stats += "\n"
       else
         stats = "No open PRs :tada:"
