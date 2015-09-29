@@ -20,6 +20,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/code-mancers/hubot-pr-status.git"
+    "url": "https://github.com/code-mancers/hubot-pr-fu.git"
   }
 }
