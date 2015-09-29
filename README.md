@@ -70,8 +70,8 @@ Some env vars are assumed to exist:
   [Read this for steps to obtain a slack token and set the bot name]( #getting-a-slack-token )
   steps](#getting-a-slack-token) to know the name of the bot.
 * GH_AUTH_TOKEN (Get this from Github)
-* HUBOT_VT_GITHUB_ORG
-* HUBOT_VT_GITHUB_REPO
+* PR_STATUS_GITHUB_ORG
+* PR_STATUS_GITHUB_REPO
 
 The `org` and `repo` are the username or organization name and the
 repository's name respectively. These have to be added to the

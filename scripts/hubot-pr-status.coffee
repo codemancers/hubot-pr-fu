@@ -1,3 +1,27 @@
+slackToken  = process.env.HUBOT_SLACK_TOKEN
+ghAuthToken = process.env.GH_AUTH_TOKEN
+ghOrg       = process.env.PR_STATUS_GITHUB_ORG
+ghRepo      = process.env.PR_STATUS_GITHUB_REPO
+
+if !(slackToken and ghAuthToken and ghOrg and ghRepo)
+  error =
+    "\n
+    Oops!\n
+    Looks like some required environment variables are missing. Please refer to\n
+    the README to know how to obtain these variables, if you haven't alredy got\n
+    them. The necessary variables are:\n\n
+
+      HUBOT_SLACK_TOKEN\n
+      GH_AUTH_TOKEN\n
+      PR_STATUS_GITHUB_ORG\n
+      PR_STATUS_GITHUB_REPO\n\n
+
+    Exiting now\n
+    "
+
+  console.log error
+  process.exit(1)
+
 StatusAll       = require("./status_all.coffee")
 StatusConflicts = require("./status_conflicts.coffee")
 StatusUser      = require("./status_user.coffee")

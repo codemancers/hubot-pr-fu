@@ -4,4 +4,4 @@ set -e
 
 npm install
 export PATH="node_modules/.bin:$PATH"
-exec node_modules/.bin/hubot --name "hubot-github" "$@"
+exec hubot --name "hubot-github" "$@"
