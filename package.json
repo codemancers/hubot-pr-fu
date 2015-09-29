@@ -11,7 +11,8 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "coffee-script": "1.9.3"
+    "coffee-script": "1.9.3",
+    "jasmine": "2.3.2"
   },
   "engines": {
     "node": "0.12.x"
