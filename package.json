@@ -1,7 +1,6 @@
 {
   "name": "hubot-pr-status",
   "version": "1.0.0",
-  "private": true,
   "author": "Kashyap <kashyap.kmbc@gmail.com>",
   "description": "Advanced Github Flow with Hubot",
   "dependencies": {
