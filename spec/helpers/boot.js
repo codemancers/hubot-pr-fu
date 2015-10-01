@@ -1,2 +1,2 @@
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 require('coffee-script/register');
