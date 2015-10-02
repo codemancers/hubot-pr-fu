@@ -1,3 +1,4 @@
+jasmine.DEFAULT_TIMEOUT_INTERVAL=100000
 describe "StatusAll", ->
   StatusAll = require '../scripts/status_all'
 
@@ -5,5 +6,5 @@ describe "StatusAll", ->
     statusAll = new StatusAll()
 
     statusAll.allPrs.then (prs) ->
-      expect(prs).to.be.an.Array
+      expect(prs.length).toEqual(8)
       done()
