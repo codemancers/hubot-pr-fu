@@ -1,4 +1,3 @@
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 4000
 nock = require('nock').back
 
 describe "StatusAll", ->
