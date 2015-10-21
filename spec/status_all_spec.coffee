@@ -1,5 +1,8 @@
 nock = require('nock').back
 
+process.env.PR_STATUS_GITHUB_ORG='sinatra'
+process.env.PR_STATUS_GITHUB_REPO='sinatra'
+
 describe "StatusAll", ->
   StatusAll = require '../scripts/status_all'
 
