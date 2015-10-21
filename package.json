@@ -11,12 +11,17 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "coffee-script": "1.9.3"
+    "coffee-script": "1.9.3",
+    "jasmine": "2.3.2",
+    "nock": "^2.13.0"
   },
   "engines": {
     "node": "0.12.x"
   },
   "main": "index.coffee",
+  "scripts": {
+    "test": "jasmine"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
