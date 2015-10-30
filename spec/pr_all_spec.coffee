@@ -1,12 +1,12 @@
 nock = require('nock').back
 
-describe "StatusAll", ->
-  StatusAll = require '../scripts/status_all'
+describe "PrAll", ->
+  PrAll = require '../scripts/pr_all'
 
   it "should initialize GH information", (done) ->
-    nock('statusAll.json', (nockDone) ->
-      statusAll = new StatusAll()
-      statusAll.allPrs.then (prs) =>
+    nock('prAll.json', (nockDone) ->
+      prAll = new PrAll()
+      prAll.allPrs.then (prs) =>
         expect(prs.length).toEqual(19)
         done()
         this.assertScopesFinished()
@@ -14,10 +14,10 @@ describe "StatusAll", ->
     )
 
   it "processes mergeable PRs", (done) ->
-    nock('statusAll.json', (nockDone) ->
-      statusAll = new StatusAll()
-      statusAll.allPrs.then (prs) =>
-        mergeablePrs = statusAll.mergeablePrs(prs)
+    nock('prAll.json', (nockDone) ->
+      prAll = new PrAll()
+      prAll.allPrs.then (prs) =>
+        mergeablePrs = prAll.mergeablePrs(prs)
         expect(mergeablePrs.length).toEqual(13)
         done()
         this.assertScopesFinished()
@@ -25,10 +25,10 @@ describe "StatusAll", ->
     )
 
   it "processes mergeable PRs", (done) ->
-    nock('statusAll.json', (nockDone) ->
-      statusAll = new StatusAll()
-      statusAll.allPrs.then (prs) =>
-        mergeablePrs = statusAll.mergeablePrs(prs)
+    nock('prAll.json', (nockDone) ->
+      prAll = new PrAll()
+      prAll.allPrs.then (prs) =>
+        mergeablePrs = prAll.mergeablePrs(prs)
         expect(mergeablePrs.length).toEqual(13)
         done()
         this.assertScopesFinished()
@@ -36,10 +36,10 @@ describe "StatusAll", ->
     )
 
   it "processes unmergeable PRs", (done) ->
-    nock('statusAll.json', (nockDone) ->
-      statusAll = new StatusAll()
-      statusAll.allPrs.then (prs) =>
-        unMergeablePrs = statusAll.unMergeablePrs(prs)
+    nock('prAll.json', (nockDone) ->
+      prAll = new PrAll()
+      prAll.allPrs.then (prs) =>
+        unMergeablePrs = prAll.unMergeablePrs(prs)
         expect(unMergeablePrs.length).toEqual(6)
         done()
         this.assertScopesFinished()
@@ -47,9 +47,9 @@ describe "StatusAll", ->
     )
 
   it "processes unmergeable PRs", (done) ->
-    nock('statusAll.json', (nockDone) ->
-      statusAll = new StatusAll()
-      statusAll.allPrs.then (prs) =>
+    nock('prAll.json', (nockDone) ->
+      prAll = new PrAll()
+      prAll.allPrs.then (prs) =>
         usersWhoOpenedPr = [
           'TrevorBramble',
           'sporkmonger',
@@ -70,7 +70,7 @@ describe "StatusAll", ->
           'tbuehlmann',
           'rakoo'
         ]
-        prsGroupedByUser = statusAll.prsGroupedByUser(prs)
+        prsGroupedByUser = prAll.prsGroupedByUser(prs)
         expect(Object.keys(prsGroupedByUser)).toEqual(usersWhoOpenedPr)
         done()
         this.assertScopesFinished()
@@ -78,9 +78,9 @@ describe "StatusAll", ->
     )
 
   it "generates summary message", (done) ->
-    nock('statusAll.json', (nockDone) ->
-      statusAll = new StatusAll()
-      statusAll.generateSummary().then (message) =>
+    nock('prAll.json', (nockDone) ->
+      prAll = new PrAll()
+      prAll.generateSummary().then (message) =>
         messageExpected = "
           Summary of all open PRs\n\n
 
@@ -108,7 +108,7 @@ describe "StatusAll", ->
           13 mergeable\n
           6 unmergeable\n\n
 
-          Run `@bot status conflicts` to know details about unmergeable pulls\n
+          Run `@bot pr conflicts` to know details about unmergeable pulls\n
         ".replace(/^\ /gm, "")
         expect(message).toEqual(messageExpected)
         done()
