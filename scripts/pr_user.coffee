@@ -1,5 +1,5 @@
 # Description:
-#   This script caters to the command `status <username>`. The username is
+#   This script caters to the command `pr <username>`. The username is
 #   expected to be a GitHub username. There are currently no checks to see if
 #   that user belongs to the organization, or even if the user exists. Another
 #   assumption is that the usernames are case-insensitive. That is, `kgrz` and
@@ -8,7 +8,7 @@ Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
 
-class StatusUser
+class PrUser
   constructor: (@username) ->
     github    = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
@@ -64,4 +64,4 @@ class StatusUser
       else
         { text: "No pending PRs for #{@username} :clap:"}
 
-module.exports = StatusUser
+module.exports = PrUser

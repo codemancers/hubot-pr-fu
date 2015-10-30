@@ -16,9 +16,9 @@
 #   PR_STATUS_GITHUB_REPO - Name of the GitHub repo for which this bot has to listen
 #
 # Commands:
-#   hubot status all - Shows a summary of all open PRs of this project
-#   hubot status <username> - Shows a summary of PRs opened by/assigned to this GitHub user
-#   hubot status conflicts - Shows a summary of all PRs with a merge conflict
+#   hubot pr all - Shows a summary of all open PRs of this project
+#   hubot pr <username> - Shows a summary of PRs opened by/assigned to this GitHub user
+#   hubot pr conflicts - Shows a summary of all PRs with a merge conflict
 slackToken  = process.env.HUBOT_SLACK_TOKEN
 ghAuthToken = process.env.GH_AUTH_TOKEN
 ghOrg       = process.env.PR_STATUS_GITHUB_ORG
@@ -43,42 +43,42 @@ if !(slackToken and ghAuthToken and ghOrg and ghRepo)
   console.log error
   process.exit(1)
 
-StatusAll       = require("./status_all.coffee")
-StatusConflicts = require("./status_conflicts.coffee")
-StatusUser      = require("./status_user.coffee")
+PrAll       = require("./pr_all.coffee")
+PrConflicts = require("./pr_conflicts.coffee")
+PrUser      = require("./pr_user.coffee")
 PostMergeHook   = require("./post_merge_hook.coffee")
 
 module.exports = (robot) ->
 
   # Matches:
   #
-  # @bot status all
-  # bot status all
+  # @bot pr all
+  # bot pr all
   #
   # Doesn't match:
   #
-  # <garbage> @bot status all <garbage>
-  # <garbage> bot status all <garbage>
+  # <garbage> @bot pr all <garbage>
+  # <garbage> bot pr all <garbage>
   #
-  # <garbage> @bot status all
-  # <garbage> bot status all
+  # <garbage> @bot pr all
+  # <garbage> bot pr all
   #
-  # @bot status all <garbage>
-  # bot status all <garbage>
+  # @bot pr all <garbage>
+  # bot pr all <garbage>
   #
   # Test: http://rubular.com/r/ZIZsNV1J6U
-  robot.respond /status\u0020(\w+)/, (resp) ->
+  robot.respond /pr\u0020(\w+)/, (resp) ->
     command = resp.match[1]
 
     switch command
       when "all"
-        robot.emit "StatusAll", { room: resp.message.room }
+        robot.emit "PrAll", { room: resp.message.room }
       when "conflicts", "conflict"
-        robot.emit "StatusConflicts", { room: resp.message.room }
+        robot.emit "PrConflicts", { room: resp.message.room }
       when "help"
         robot.emit "help", { room: resp.message.room }
       else
-        robot.emit "StatusUser", { username: command, room: resp.message.room }
+        robot.emit "PrUser", { username: command, room: resp.message.room }
 
   robot.on "help", (metadata) ->
     message = {
@@ -88,11 +88,11 @@ module.exports = (robot) ->
     }
     robot.adapter.customMessage message
 
-  robot.on "StatusConflicts", (metadata) ->
+  robot.on "PrConflicts", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    statusConflicts = new StatusConflicts()
-    statusConflicts.generateMessage().then (message) =>
+    prConflicts = new PrConflicts()
+    prConflicts.generateMessage().then (message) =>
       # Slack ignores empty array for attachments, so this works even if the
       # message doesn't have any attachments
       msgData = {
@@ -102,11 +102,11 @@ module.exports = (robot) ->
       }
       robot.adapter.customMessage msgData
 
-  robot.on "StatusUser", (metadata) ->
+  robot.on "PrUser", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    statusUser = new StatusUser(metadata.username)
-    statusUser.generateMessage().then (message) =>
+    prUser = new PrUser(metadata.username)
+    prUser.generateMessage().then (message) =>
       # Slack ignores empty array for attachments, so this works even if the
       # message doesn't have any attachments
       msgData = {
@@ -117,11 +117,11 @@ module.exports = (robot) ->
 
       robot.adapter.customMessage msgData
 
-  robot.on "StatusAll", (metadata) ->
+  robot.on "PrAll", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    statusAll = new StatusAll()
-    statusAll.generateSummary().then (summary) =>
+    PrAll = new PrAll()
+    PrAll.generateSummary().then (summary) =>
       msgData = {
         channel: metadata.room
         text: summary

@@ -6,7 +6,7 @@
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
-StatusConflicts = require './status_conflicts'
+PrConflicts = require './pr_conflicts'
 
 class PostMergeHook
   constructor: (@prNumber) ->
@@ -28,7 +28,7 @@ class PostMergeHook
     @repo.pulls(@prNumber).fetch()
 
   generateMessage: ->
-    conflictsMessage = new StatusConflicts().generateMessage()
+    conflictsMessage = new PrConflicts().generateMessage()
 
     Q.allSettled([@getClosedPrDetails(), @allPrs, conflictsMessage])
      .then (results) =>
@@ -38,7 +38,7 @@ class PostMergeHook
 
        if @unMergeablePrs(allPrs).length
          text = "
-           There are merge conflicts. Run `@bot status conflicts` for more info
+           There are merge conflicts. Run `@bot pr conflicts` for more info
            "
          {
            text: text
