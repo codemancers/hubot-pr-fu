@@ -1,3 +1,24 @@
+# Description:
+#  This script provides three commands to work with open Github PRs on a
+#  per-project basis
+#
+#  Dependencies:
+#    "hubot": "2.5.5",
+#    "hubot-slack": "^3.3.0",
+#    "octokat": "^0.4.11",
+#    "q": "^1.4.1",
+#    "underscore": "^1.8.3"
+#
+# Configuration:
+#   HUBOT_SLACK_TOKEN - API token for this bot user (Refer README on how to obtain this)
+#   GH_AUTH_TOKEN - A Github token for this bot user (Refer README on how to obtain this)
+#   PR_STATUS_GITHUB_ORG - Name of the GitHub organization for which this bot has to listen
+#   PR_STATUS_GITHUB_REPO - Name of the GitHub repo for which this bot has to listen
+#
+# Commands:
+#   hubot status all - Shows a summary of all open PRs of this project
+#   hubot status <username> - Shows a summary of PRs opened by/assigned to this GitHub user
+#   hubot status conflicts - Shows a summary of all PRs with a merge conflict
 slackToken  = process.env.HUBOT_SLACK_TOKEN
 ghAuthToken = process.env.GH_AUTH_TOKEN
 ghOrg       = process.env.PR_STATUS_GITHUB_ORG
@@ -62,48 +83,8 @@ module.exports = (robot) ->
   robot.on "help", (metadata) ->
     message = {
       channel: metadata.room
-      text: "Available Commands:"
-      attachments: [
-        {
-          text: "
-          `status all`\n\n
-
-          This command returns the PR stats for the repo viz., total open PRs,
-          their mergeability status, and links to those PRs.
-          ",
-          mrkdwn_in: ["text"]
-        },
-        {
-          text: "
-          `status conflicts`\n\n
-
-          This command returns all the PRs which have merge conflicts. This has
-          more detailed information for those compared to `status all` command.
-          The title, PR number, link to that PR, assignee and the username who
-          opened this PR is included in the information.
-          ",
-          mrkdwn_in: ["text"]
-        },
-        {
-          text: "
-          `status help`\n\n
-
-          Prints out this help text
-          ",
-          mrkdwn_in: ["text"]
-        },
-        {
-          text: "
-          `status kgrz`\n\n
-
-          This command returns all the PRs opened by this user. This includes
-          all open PRs which are mergeable and non-mergeable. The `username` is
-          assumed to be a valid Github username. For now, there is no
-          authorization or authentication built-in.
-          ",
-          mrkdwn_in: ["text"]
-        }
-      ]
+      text: "Try running `@bot help` to view commands"
+      mrkdwn_in: ["text"]
     }
     robot.adapter.customMessage message
 

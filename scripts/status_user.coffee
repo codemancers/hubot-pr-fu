@@ -1,3 +1,9 @@
+# Description:
+#   This script caters to the command `status <username>`. The username is
+#   expected to be a GitHub username. There are currently no checks to see if
+#   that user belongs to the organization, or even if the user exists. Another
+#   assumption is that the usernames are case-insensitive. That is, `kgrz` and
+#   `Kgrz` are the same user.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
