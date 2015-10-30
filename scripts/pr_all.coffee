@@ -1,12 +1,12 @@
 # Description:
-#   This module handles the `status all` command. The two main functions are
+#   This module handles the `pr all` command. The two main functions are
 #   fetching the PR information for all open PRs, and then listing out open PRs
 #   against each user.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
 
-class StatusAll
+class PrAll
   # For some reason, calling @fetchAllPrs() in the constructor doesn't seem to
   # work, where fetchAllPrs()'s functionality is to populate the @allPrs
   # variable
@@ -44,7 +44,7 @@ class StatusAll
   #  10 mergeable
   #  1 unmergeable
   #
-  #  Run `status conflicts` to know details about unmergeable pulls
+  #  Run `pr conflicts` to know details about unmergeable pulls
   generateSummary: ->
     @allPrs.then (prs) =>
       if prs.length > 0
@@ -69,9 +69,9 @@ class StatusAll
         stats += "#{mergeablePrCount} mergeable\n"
         stats += "#{unMergeablePrCount} unmergeable\n"
         stats += "\n"
-        stats += "Run `@bot status conflicts` to know details about unmergeable pulls"
+        stats += "Run `@bot pr conflicts` to know details about unmergeable pulls"
         stats += "\n"
       else
         stats = "No open PRs :tada:"
 
-module.exports = StatusAll
+module.exports = PrAll

@@ -1,5 +1,5 @@
 # Description:
-#   This module handles the command `status conflicts`. When that command is
+#   This module handles the command `pr conflicts`. When that command is
 #   run, this script would fetch the information of all open PRs from GitHub,
 #   and then figure out, based on the key `unmergeable`, if that PR is
 #   mergeable or not.
@@ -7,7 +7,7 @@ Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
 
-class StatusConflicts
+class PrConflicts
   constructor: ->
     github = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
@@ -50,4 +50,4 @@ class StatusConflicts
       else
         { text: "No unmergeable PRs found :tada:" }
 
-module.exports = StatusConflicts
+module.exports = PrConflicts
