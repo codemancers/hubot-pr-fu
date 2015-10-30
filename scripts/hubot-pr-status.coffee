@@ -1,3 +1,24 @@
+# Description:
+#  This script provides three commands to work with open Github PRs on a
+#  per-project basis
+#
+#  Dependencies:
+#    "hubot": "2.5.5",
+#    "hubot-slack": "^3.3.0",
+#    "octokat": "^0.4.11",
+#    "q": "^1.4.1",
+#    "underscore": "^1.8.3"
+#
+# Configuration:
+#   HUBOT_SLACK_TOKEN - API token for this bot user (Refer README on how to obtain this)
+#   GH_AUTH_TOKEN - A Github token for this bot user (Refer README on how to obtain this)
+#   PR_STATUS_GITHUB_ORG - Name of the GitHub organization for which this bot has to listen
+#   PR_STATUS_GITHUB_REPO - Name of the GitHub repo for which this bot has to listen
+#
+# Commands:
+#   hubot status all - Shows a summary of all open PRs of this project
+#   hubot status <username> - Shows a summary of PRs opened by/assigned to this GitHub user
+#   hubot status conflicts - Shows a summary of all PRs with a merge conflict
 slackToken  = process.env.HUBOT_SLACK_TOKEN
 ghAuthToken = process.env.GH_AUTH_TOKEN
 ghOrg       = process.env.PR_STATUS_GITHUB_ORG
