@@ -128,10 +128,21 @@ module.exports = (robot) ->
     statusUser.generateMessage().then (message) =>
       # Slack ignores empty array for attachments, so this works even if the
       # message doesn't have any attachments
+
+      # Send data about PRs opened by the current user first
       msgData = {
         channel: metadata.room
-        text: message.text
-        attachments: message.attachments
+        text: message.ownedPrMessage.text
+        attachments: message.ownedPrMessage.attachments
+      }
+
+      robot.adapter.customMessage msgData
+
+      # Send data about PRs assigned to this user
+      msgData = {
+        channel: metadata.room
+        text: message.assignedPrMessage.text
+        attachments: message.assignedPrMessage.attachments
       }
 
       robot.adapter.customMessage msgData
