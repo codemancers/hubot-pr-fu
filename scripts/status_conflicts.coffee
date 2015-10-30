@@ -1,3 +1,8 @@
+# Description:
+#   This module handles the command `status conflicts`. When that command is
+#   run, this script would fetch the information of all open PRs from GitHub,
+#   and then figure out, based on the key `unmergeable`, if that PR is
+#   mergeable or not.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'

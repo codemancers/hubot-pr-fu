@@ -1,3 +1,8 @@
+# Description:
+#   This module handles the responses to the GitHub hook when a PR gets merged.
+#   When a PR gets merged on GitHub, a webook is delivered to the bot which
+#   would then summarize the conflicts on all open PRs and notify if there are
+#   any.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
