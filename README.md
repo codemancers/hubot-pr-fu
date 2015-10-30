@@ -40,15 +40,15 @@ You can start hubot-pr-fu locally by running:
   that the mergeability of that PR has not yet been determined, and a
   background job has been scheduled. For reasons of making the logic
   simpler, we don't display information about these `nil` state PRs. So
-  there might be a rare case where the total number of PRs in `status
-  all` command doesn't match with the sum of mergeable PRs and
-  non-mergeable PRs in the same command's response.
+  there might be a rare case where the total number of PRs in `pr all`
+  command doesn't match with the sum of mergeable PRs and non-mergeable
+  PRs in the same command's response.
 
 ### Commands/Features
 
 #### User specific commands
 
-`status all`
+`pr all`
 
 This command returns the PR stats for the repo. This information would
 include:
@@ -57,14 +57,14 @@ include:
 2. Total PRs which are mergeable and those which are not
 3. List of users who have open PRs and links to each of those
 
-`status conflicts`
+`pr conflicts`
 
 This command returns all the PRs which have merge conflicts. This has
-more detailed information for those compared to `status all` command.
+more detailed information for those compared to `pr all` command.
 The title, PR number, link to that PR, assignee and the username who
 opened this PR is included in the information.
 
-`status <username>`
+`pr <username>`
 
 This command returns all the PRs opened by this user. This includes all
 open PRs which are mergeable and non-mergeable. The `username` is
@@ -73,7 +73,7 @@ authorization or authentication built-in. Another assumption is that a
 username in lowercase is same as capitalized or camelcased. That is, for
 a username `bootstrap`, the users `Bootstrap`, `bootStrap` are the same.
 
-One caveat is that the robot will treat every string after `status`
+One caveat is that the robot will treat every string after `pr`
 other than `all` and `conflicts` as a username. So, don't abuse this.
 Adding a way to make this better is in the works.
 
