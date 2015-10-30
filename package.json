@@ -1,6 +1,6 @@
 {
   "name": "hubot-pr-fu",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "author": "Kashyap <kashyap.kmbc@gmail.com>",
   "description": "Advanced Github Flow with Hubot",
   "dependencies": {
