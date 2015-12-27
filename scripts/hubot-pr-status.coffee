@@ -75,13 +75,27 @@ module.exports = (robot) ->
     # TODO: Throw error if no org/repo is specified
     switch command
       when "all"
-        robot.emit "PrAll", { room: resp.message.room, org: org, repo: repo }
+        robot.emit "PrAll",
+          room: resp.message.room
+          org: org
+          repo: repo
+
       when "conflicts", "conflict"
-        robot.emit "PrConflicts", { room: resp.message.room }
+        robot.emit "PrConflicts",
+          room: resp.message.room
+          org: org
+          repo: repo
+
+      # TODO: Get rid of this
       when "help"
         robot.emit "help", { room: resp.message.room }
+
       else
-        robot.emit "PrUser", { username: command, room: resp.message.room }
+        robot.emit "PrUser",
+          username: command
+          room: resp.message.room
+          org: org
+          repo: repo
 
   robot.on "help", (metadata) ->
     message = {
@@ -94,7 +108,7 @@ module.exports = (robot) ->
   robot.on "PrConflicts", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    prConflicts = new PrConflicts()
+    prConflicts = new PrConflicts(metadata.org, metadata.repo)
     prConflicts.generateMessage().then (message) =>
       # Slack ignores empty array for attachments, so this works even if the
       # message doesn't have any attachments
@@ -108,7 +122,7 @@ module.exports = (robot) ->
   robot.on "PrUser", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    prUser = new PrUser(metadata.username)
+    prUser = new PrUser(metadata.username, metadata.org, metadata.repo)
     prUser.generateMessage().then (message) =>
       # Slack ignores empty array for attachments, so this works even if the
       # message doesn't have any attachments
