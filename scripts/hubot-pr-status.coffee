@@ -16,9 +16,9 @@
 #   PR_STATUS_GITHUB_REPO - Name of the GitHub repo for which this bot has to listen
 #
 # Commands:
-#   hubot pr all - Shows a summary of all open PRs of this project
-#   hubot pr <username> - Shows a summary of PRs opened by/assigned to this GitHub user
-#   hubot pr conflicts - Shows a summary of all PRs with a merge conflict
+#   hubot pr org/repo all - Shows a summary of all open PRs of this project
+#   hubot pr org/repo <username> - Shows a summary of PRs opened by/assigned to this GitHub user
+#   hubot pr org/repo conflicts - Shows a summary of all PRs with a merge conflict
 slackToken  = process.env.HUBOT_SLACK_TOKEN
 ghAuthToken = process.env.GH_AUTH_TOKEN
 ghOrg       = process.env.PR_STATUS_GITHUB_ORG
@@ -52,27 +52,30 @@ module.exports = (robot) ->
 
   # Matches:
   #
-  # @bot pr all
-  # bot pr all
+  # @bot pr org/repo all
+  # bot pr org/repo all
   #
   # Doesn't match:
   #
-  # <garbage> @bot pr all <garbage>
-  # <garbage> bot pr all <garbage>
+  # <garbage> @bot pr org/repo all <garbage>
+  # <garbage> bot pr org/repo all <garbage>
   #
-  # <garbage> @bot pr all
-  # <garbage> bot pr all
+  # <garbage> @bot pr org/repo all
+  # <garbage> bot pr org/repo all
   #
-  # @bot pr all <garbage>
-  # bot pr all <garbage>
+  # @bot pr org/repo all <garbage>
+  # bot pr org/repo all <garbage>
   #
   # Test: http://rubular.com/r/ZIZsNV1J6U
-  robot.respond /pr\u0020(\w+)/, (resp) ->
-    command = resp.match[1]
+  robot.respond /pr\u0020(\w+)\/(\w+)\u0020(\w+)/, (resp) ->
+    org = resp.match[1]
+    repo    = resp.match[2]
+    command = resp.match[3]
 
+    # TODO: Throw error if no org/repo is specified
     switch command
       when "all"
-        robot.emit "PrAll", { room: resp.message.room }
+        robot.emit "PrAll", { room: resp.message.room, org: org, repo: repo }
       when "conflicts", "conflict"
         robot.emit "PrConflicts", { room: resp.message.room }
       when "help"
@@ -120,8 +123,8 @@ module.exports = (robot) ->
   robot.on "PrAll", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    PrAll = new PrAll()
-    PrAll.generateSummary().then (summary) =>
+    prAll = new PrAll(metadata.org, metadata.repo)
+    prAll.generateSummary().then (summary) =>
       msgData = {
         channel: metadata.room
         text: summary

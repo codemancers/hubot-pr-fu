@@ -10,13 +10,10 @@ class PrAll
   # For some reason, calling @fetchAllPrs() in the constructor doesn't seem to
   # work, where fetchAllPrs()'s functionality is to populate the @allPrs
   # variable
-  constructor: ->
+  constructor: (@org, @repo) ->
     github = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
-    repo = github.repos(
-      process.env.PR_STATUS_GITHUB_ORG,
-      process.env.PR_STATUS_GITHUB_REPO
-    )
+    repo = github.repos(@org, @repo)
 
     @allPrs =
       repo.pulls.fetch({status: "open"}).then (prs) =>
