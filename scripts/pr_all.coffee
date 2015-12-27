@@ -1,7 +1,7 @@
 # Description:
-#   This module handles the `pr all` command. The two main functions are
-#   fetching the PR information for all open PRs, and then listing out open PRs
-#   against each user.
+#   This module handles the `pr orgname/repo all` command. The two main
+#   functions are fetching the PR information for all open PRs, and then
+#   listing out open PRs against each user.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
