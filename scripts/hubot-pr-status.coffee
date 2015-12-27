@@ -12,8 +12,6 @@
 # Configuration:
 #   HUBOT_SLACK_TOKEN - API token for this bot user (Refer README on how to obtain this)
 #   GH_AUTH_TOKEN - A Github token for this bot user (Refer README on how to obtain this)
-#   PR_STATUS_GITHUB_ORG - Name of the GitHub organization for which this bot has to listen
-#   PR_STATUS_GITHUB_REPO - Name of the GitHub repo for which this bot has to listen
 #
 # Commands:
 #   hubot pr org/repo all - Shows a summary of all open PRs of this project
@@ -21,10 +19,8 @@
 #   hubot pr org/repo conflicts - Shows a summary of all PRs with a merge conflict
 slackToken  = process.env.HUBOT_SLACK_TOKEN
 ghAuthToken = process.env.GH_AUTH_TOKEN
-ghOrg       = process.env.PR_STATUS_GITHUB_ORG
-ghRepo      = process.env.PR_STATUS_GITHUB_REPO
 
-if !(slackToken and ghAuthToken and ghOrg and ghRepo)
+if !(slackToken and ghAuthToken)
   error =
     "\n
     Oops!\n
@@ -34,8 +30,6 @@ if !(slackToken and ghAuthToken and ghOrg and ghRepo)
 
       HUBOT_SLACK_TOKEN\n
       GH_AUTH_TOKEN\n
-      PR_STATUS_GITHUB_ORG\n
-      PR_STATUS_GITHUB_REPO\n\n
 
     Exiting now\n
     "
@@ -66,7 +60,7 @@ module.exports = (robot) ->
   # @bot pr org/repo all <garbage>
   # bot pr org/repo all <garbage>
   #
-  # Test: http://rubular.com/r/ZIZsNV1J6U
+  # Test: http://rubular.com/r/1HXUQVxr8Z
   robot.respond /pr\u0020(.+)\/(.+)\u0020(\w+)/, (resp) ->
     org = resp.match[1]
     repo    = resp.match[2]

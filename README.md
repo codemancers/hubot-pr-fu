@@ -46,25 +46,29 @@ You can start hubot-pr-fu locally by running:
 
 ### Commands/Features
 
+__Note: This bot is still under active development, and so has really
+little error checking (existence of organization or repo, valid
+permissions etc.). User discretion is advised__
+
 #### User specific commands
 
-`pr all`
+`pr orgname/repo all`
 
-This command returns the PR stats for the repo. This information would
-include:
+This command returns the PR stats for the repo specified under the
+specified organization. This information would include:
 
 1. Total open PRs
 2. Total PRs which are mergeable and those which are not
 3. List of users who have open PRs and links to each of those
 
-`pr conflicts`
+`pr orgname/repo conflicts`
 
 This command returns all the PRs which have merge conflicts. This has
 more detailed information for those compared to `pr all` command.
 The title, PR number, link to that PR, assignee and the username who
 opened this PR is included in the information.
 
-`pr <username>`
+`pr orgname/repo <username>`
 
 This command returns all the PRs opened by this user. This includes all
 open PRs which are mergeable and non-mergeable. The `username` is
@@ -86,13 +90,6 @@ Some env vars are assumed to exist:
   [Read this for steps to obtain a slack token and set the bot name]( #getting-a-slack-token )
   steps](#getting-a-slack-token) to know the name of the bot.
 * GH_AUTH_TOKEN (Get this from Github)
-* PR_STATUS_GITHUB_ORG
-* PR_STATUS_GITHUB_REPO
-
-The `org` and `repo` are the username or organization name and the
-repository's name respectively. These have to be added to the
-environment based on which project you want to configure the robot to
-work with.
 
 #### Getting a Slack Token
 1. Signin into Slack via https://slack.com/signin
