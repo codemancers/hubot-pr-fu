@@ -152,6 +152,8 @@ module.exports = (robot) ->
     # piece of information.
     pr_action    = data.action
     closedPr     = data.pull_request
+    org          = closedPr.organization.login
+    repo         = closedPr.repository.name
     merge_action = closedPr.merged
     pr_number    = closedPr.number
 
@@ -164,7 +166,7 @@ module.exports = (robot) ->
       }
       robot.adapter.customMessage msgData
 
-      postMergeHook = new PostMergeHook(pr_number)
+      postMergeHook = new PostMergeHook(pr_number, org, repo)
       postMergeHook.generateMessage().then (message) =>
         msgData = {
           channel: "general"

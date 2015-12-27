@@ -9,13 +9,10 @@ Q       = require 'q'
 PrConflicts = require './pr_conflicts'
 
 class PostMergeHook
-  constructor: (@prNumber) ->
+  constructor: (@prNumber, @org, @repo) ->
     github    = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
-    @repo = github.repos(
-      process.env.PR_STATUS_GITHUB_ORG,
-      process.env.PR_STATUS_GITHUB_REPO
-    )
+    @repo = github.repos(@org, @repo)
 
     @allPrs =
       repo.pulls.fetch({status: "open"}).then (prs) ->
