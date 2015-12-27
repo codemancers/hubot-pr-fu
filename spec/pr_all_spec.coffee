@@ -5,7 +5,7 @@ describe "PrAll", ->
 
   it "should initialize GH information", (done) ->
     nock('prAll.json', (nockDone) ->
-      prAll = new PrAll()
+      prAll = new PrAll('sinatra', 'sinatra')
       prAll.allPrs.then (prs) =>
         expect(prs.length).toEqual(19)
         done()
@@ -15,7 +15,7 @@ describe "PrAll", ->
 
   it "processes mergeable PRs", (done) ->
     nock('prAll.json', (nockDone) ->
-      prAll = new PrAll()
+      prAll = new PrAll('sinatra', 'sinatra')
       prAll.allPrs.then (prs) =>
         mergeablePrs = prAll.mergeablePrs(prs)
         expect(mergeablePrs.length).toEqual(13)
@@ -26,7 +26,7 @@ describe "PrAll", ->
 
   it "processes mergeable PRs", (done) ->
     nock('prAll.json', (nockDone) ->
-      prAll = new PrAll()
+      prAll = new PrAll('sinatra', 'sinatra')
       prAll.allPrs.then (prs) =>
         mergeablePrs = prAll.mergeablePrs(prs)
         expect(mergeablePrs.length).toEqual(13)
@@ -37,7 +37,7 @@ describe "PrAll", ->
 
   it "processes unmergeable PRs", (done) ->
     nock('prAll.json', (nockDone) ->
-      prAll = new PrAll()
+      prAll = new PrAll('sinatra', 'sinatra')
       prAll.allPrs.then (prs) =>
         unMergeablePrs = prAll.unMergeablePrs(prs)
         expect(unMergeablePrs.length).toEqual(6)
@@ -48,7 +48,7 @@ describe "PrAll", ->
 
   it "processes unmergeable PRs", (done) ->
     nock('prAll.json', (nockDone) ->
-      prAll = new PrAll()
+      prAll = new PrAll('sinatra', 'sinatra')
       prAll.allPrs.then (prs) =>
         usersWhoOpenedPr = [
           'TrevorBramble',
@@ -79,7 +79,7 @@ describe "PrAll", ->
 
   it "generates summary message", (done) ->
     nock('prAll.json', (nockDone) ->
-      prAll = new PrAll()
+      prAll = new PrAll('sinatra', 'sinatra')
       prAll.generateSummary().then (message) =>
         messageExpected = "
           Summary of all open PRs\n\n
