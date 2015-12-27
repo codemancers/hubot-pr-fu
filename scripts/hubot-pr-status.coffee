@@ -67,7 +67,7 @@ module.exports = (robot) ->
   # bot pr org/repo all <garbage>
   #
   # Test: http://rubular.com/r/ZIZsNV1J6U
-  robot.respond /pr\u0020(\w+)\/(\w+)\u0020(\w+)/, (resp) ->
+  robot.respond /pr\u0020(.+)\/(.+)\u0020(\w+)/, (resp) ->
     org = resp.match[1]
     repo    = resp.match[2]
     command = resp.match[3]
