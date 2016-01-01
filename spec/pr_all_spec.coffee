@@ -1,7 +1,7 @@
 nock = require('nock').back
 
 describe "PrAll", ->
-  PrAll = require '../scripts/pr_all'
+  PrAll = require '../src/pr_all'
 
   it "should initialize GH information", (done) ->
     nock('prAll.json', (nockDone) ->
