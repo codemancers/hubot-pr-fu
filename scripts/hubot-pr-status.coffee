@@ -37,10 +37,10 @@ if !(slackToken and ghAuthToken)
   console.log error
   process.exit(1)
 
-PrAll       = require("./pr_all.coffee")
-PrConflicts = require("./pr_conflicts.coffee")
-PrUser      = require("./pr_user.coffee")
-PostMergeHook   = require("./post_merge_hook.coffee")
+PrAll       = require("../src/pr_all.coffee")
+PrConflicts = require("../src/pr_conflicts.coffee")
+PrUser      = require("../src/pr_user.coffee")
+PostMergeHook   = require("../src/post_merge_hook.coffee")
 
 module.exports = (robot) ->
 
