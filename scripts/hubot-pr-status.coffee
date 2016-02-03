@@ -12,19 +12,15 @@
 # Configuration:
 #   HUBOT_SLACK_TOKEN - API token for this bot user (Refer README on how to obtain this)
 #   GH_AUTH_TOKEN - A Github token for this bot user (Refer README on how to obtain this)
-#   PR_STATUS_GITHUB_ORG - Name of the GitHub organization for which this bot has to listen
-#   PR_STATUS_GITHUB_REPO - Name of the GitHub repo for which this bot has to listen
 #
 # Commands:
-#   hubot pr all - Shows a summary of all open PRs of this project
-#   hubot pr <username> - Shows a summary of PRs opened by/assigned to this GitHub user
-#   hubot pr conflicts - Shows a summary of all PRs with a merge conflict
+#   hubot pr org/repo all - Shows a summary of all open PRs of this project
+#   hubot pr org/repo <username> - Shows a summary of PRs opened by/assigned to this GitHub user
+#   hubot pr org/repo conflicts - Shows a summary of all PRs with a merge conflict
 slackToken  = process.env.HUBOT_SLACK_TOKEN
 ghAuthToken = process.env.GH_AUTH_TOKEN
-ghOrg       = process.env.PR_STATUS_GITHUB_ORG
-ghRepo      = process.env.PR_STATUS_GITHUB_REPO
 
-if !(slackToken and ghAuthToken and ghOrg and ghRepo)
+if !(slackToken and ghAuthToken)
   error =
     "\n
     Oops!\n
@@ -34,8 +30,6 @@ if !(slackToken and ghAuthToken and ghOrg and ghRepo)
 
       HUBOT_SLACK_TOKEN\n
       GH_AUTH_TOKEN\n
-      PR_STATUS_GITHUB_ORG\n
-      PR_STATUS_GITHUB_REPO\n\n
 
     Exiting now\n
     "
@@ -43,42 +37,59 @@ if !(slackToken and ghAuthToken and ghOrg and ghRepo)
   console.log error
   process.exit(1)
 
-PrAll       = require("./pr_all.coffee")
-PrConflicts = require("./pr_conflicts.coffee")
-PrUser      = require("./pr_user.coffee")
-PostMergeHook   = require("./post_merge_hook.coffee")
+PrAll       = require("../src/pr_all.coffee")
+PrConflicts = require("../src/pr_conflicts.coffee")
+PrUser      = require("../src/pr_user.coffee")
+PostMergeHook   = require("../src/post_merge_hook.coffee")
 
 module.exports = (robot) ->
 
   # Matches:
   #
-  # @bot pr all
-  # bot pr all
+  # @bot pr org/repo all
+  # bot pr org/repo all
   #
   # Doesn't match:
   #
-  # <garbage> @bot pr all <garbage>
-  # <garbage> bot pr all <garbage>
+  # <garbage> @bot pr org/repo all <garbage>
+  # <garbage> bot pr org/repo all <garbage>
   #
-  # <garbage> @bot pr all
-  # <garbage> bot pr all
+  # <garbage> @bot pr org/repo all
+  # <garbage> bot pr org/repo all
   #
-  # @bot pr all <garbage>
-  # bot pr all <garbage>
+  # @bot pr org/repo all <garbage>
+  # bot pr org/repo all <garbage>
   #
-  # Test: http://rubular.com/r/ZIZsNV1J6U
-  robot.respond /pr\u0020(\w+)/, (resp) ->
-    command = resp.match[1]
+  # Test: http://rubular.com/r/1HXUQVxr8Z
+  robot.respond /pr\u0020(.+)\/(.+)\u0020(\w+)/, (resp) ->
+    org = resp.match[1]
+    repo    = resp.match[2]
+    command = resp.match[3]
 
+    # TODO: Throw error if no org/repo is specified
     switch command
       when "all"
-        robot.emit "PrAll", { room: resp.message.room }
+        robot.emit "PrAll",
+          room: resp.message.room
+          org: org
+          repo: repo
+
       when "conflicts", "conflict"
-        robot.emit "PrConflicts", { room: resp.message.room }
+        robot.emit "PrConflicts",
+          room: resp.message.room
+          org: org
+          repo: repo
+
+      # TODO: Get rid of this
       when "help"
         robot.emit "help", { room: resp.message.room }
+
       else
-        robot.emit "PrUser", { username: command, room: resp.message.room }
+        robot.emit "PrUser",
+          username: command
+          room: resp.message.room
+          org: org
+          repo: repo
 
   robot.on "help", (metadata) ->
     message = {
@@ -91,7 +102,7 @@ module.exports = (robot) ->
   robot.on "PrConflicts", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    prConflicts = new PrConflicts()
+    prConflicts = new PrConflicts(metadata.org, metadata.repo)
     prConflicts.generateMessage().then (message) =>
       # Slack ignores empty array for attachments, so this works even if the
       # message doesn't have any attachments
@@ -105,7 +116,7 @@ module.exports = (robot) ->
   robot.on "PrUser", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    prUser = new PrUser(metadata.username)
+    prUser = new PrUser(metadata.username, metadata.org, metadata.repo)
     prUser.generateMessage().then (message) =>
       # Slack ignores empty array for attachments, so this works even if the
       # message doesn't have any attachments
@@ -120,8 +131,8 @@ module.exports = (robot) ->
   robot.on "PrAll", (metadata) ->
     robot.send {room: metadata.room}, "Checking…"
 
-    PrAll = new PrAll()
-    PrAll.generateSummary().then (summary) =>
+    prAll = new PrAll(metadata.org, metadata.repo)
+    prAll.generateSummary().then (summary) =>
       msgData = {
         channel: metadata.room
         text: summary
@@ -135,6 +146,8 @@ module.exports = (robot) ->
     # piece of information.
     pr_action    = data.action
     closedPr     = data.pull_request
+    org          = closedPr.organization.login
+    repo         = closedPr.repository.name
     merge_action = closedPr.merged
     pr_number    = closedPr.number
 
@@ -147,7 +160,7 @@ module.exports = (robot) ->
       }
       robot.adapter.customMessage msgData
 
-      postMergeHook = new PostMergeHook(pr_number)
+      postMergeHook = new PostMergeHook(pr_number, org, repo)
       postMergeHook.generateMessage().then (message) =>
         msgData = {
           channel: "general"

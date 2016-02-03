@@ -1,20 +1,17 @@
 # Description:
-#   This module handles the command `pr conflicts`. When that command is
-#   run, this script would fetch the information of all open PRs from GitHub,
-#   and then figure out, based on the key `unmergeable`, if that PR is
-#   mergeable or not.
+#   This module handles the command `pr orgname/repo conflicts`. When that
+#   command is run, this script would fetch the information of all open PRs
+#   from GitHub, and then figure out, based on the key `unmergeable`, if that
+#   PR is mergeable or not.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
 
 class PrConflicts
-  constructor: ->
+  constructor: (@org, @repo) ->
     github = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
-    repo = github.repos(
-      process.env.PR_STATUS_GITHUB_ORG,
-      process.env.PR_STATUS_GITHUB_REPO
-    )
+    repo = github.repos(@org, @repo)
 
     @allPrs =
       repo.pulls.fetch({status: "open"}).then (prs) =>

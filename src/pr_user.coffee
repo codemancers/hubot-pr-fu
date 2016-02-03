@@ -1,21 +1,18 @@
 # Description:
-#   This script caters to the command `pr <username>`. The username is
-#   expected to be a GitHub username. There are currently no checks to see if
-#   that user belongs to the organization, or even if the user exists. Another
-#   assumption is that the usernames are case-insensitive. That is, `kgrz` and
-#   `Kgrz` are the same user.
+#   This script caters to the command `pr orgname/repo <username>`. The
+#   username is expected to be a GitHub username. There are currently no
+#   checks to see if that user belongs to the organization, or even if the
+#   user exists. Another assumption is that the usernames are
+#   case-insensitive. That is, `kgrz` and `Kgrz` are the same user.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
 
 class PrUser
-  constructor: (@username) ->
+  constructor: (@username, @org, @repo) ->
     github    = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
-    repo = github.repos(
-      process.env.PR_STATUS_GITHUB_ORG,
-      process.env.PR_STATUS_GITHUB_REPO
-    )
+    repo = github.repos(@org, @repo)
 
     @allPrs =
       repo.pulls.fetch({status: "open"}).then (prs) =>

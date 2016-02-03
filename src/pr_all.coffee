@@ -1,7 +1,7 @@
 # Description:
-#   This module handles the `pr all` command. The two main functions are
-#   fetching the PR information for all open PRs, and then listing out open PRs
-#   against each user.
+#   This module handles the `pr orgname/repo all` command. The two main
+#   functions are fetching the PR information for all open PRs, and then
+#   listing out open PRs against each user.
 Octokat = require 'octokat'
 _       = require 'underscore'
 Q       = require 'q'
@@ -10,13 +10,10 @@ class PrAll
   # For some reason, calling @fetchAllPrs() in the constructor doesn't seem to
   # work, where fetchAllPrs()'s functionality is to populate the @allPrs
   # variable
-  constructor: ->
+  constructor: (@org, @repo) ->
     github = new Octokat(token: process.env.GH_AUTH_TOKEN)
 
-    repo = github.repos(
-      process.env.PR_STATUS_GITHUB_ORG,
-      process.env.PR_STATUS_GITHUB_REPO
-    )
+    repo = github.repos(@org, @repo)
 
     @allPrs =
       repo.pulls.fetch({status: "open"}).then (prs) =>
