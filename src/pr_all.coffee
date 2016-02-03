@@ -16,8 +16,13 @@ class PrAll
     repo = github.repos(@org, @repo)
 
     @allPrs =
-      repo.pulls.fetch({status: "open"}).then (prs) =>
+      repo.pulls.fetch({status: "open"}).then((prs) =>
         Q.all _.map(prs, (pr) => repo.pulls(pr.number).fetch())
+      ).catch((error) ->
+        console.log("File: pr_all.coffee")
+        console.log(error.stack)
+        error
+      )
 
   mergeablePrs: (prs) ->
     _.filter(prs, (pr) -> pr.mergeable == true)
@@ -43,32 +48,34 @@ class PrAll
   #
   #  Run `pr conflicts` to know details about unmergeable pulls
   generateSummary: ->
-    @allPrs.then (prs) =>
-      if prs.length > 0
-        mergeablePrCount   = @mergeablePrs(prs).length
-        unMergeablePrCount = @unMergeablePrs(prs).length
+    @allPrs.then((prs) => @summarize(prs)).catch((error) -> console.log(error))
 
-        stats = "Summary of all open PRs\n\n"
-        stats += "#{prs.length} open PRs\n"
-        stats += "\n"
+  summarize: (prs) ->
+    if prs.length > 0
+      mergeablePrCount   = @mergeablePrs(prs).length
+      unMergeablePrCount = @unMergeablePrs(prs).length
 
-        _.each(
-          @prsGroupedByUser(prs),
-          (prs, user) =>
-            linksToPrs = _.map(
-              prs,
-              (pr) -> "<#{pr.Links.html.href}|##{pr.number}>"
-            )
-            stats += "#{prs.length} by #{user}: #{linksToPrs.join(", ")}\n"
-        )
+      stats = "Summary of all open PRs\n\n"
+      stats += "#{prs.length} open PRs\n"
+      stats += "\n"
 
-        stats += "\n"
-        stats += "#{mergeablePrCount} mergeable\n"
-        stats += "#{unMergeablePrCount} unmergeable\n"
-        stats += "\n"
-        stats += "Run `@bot pr conflicts` to know details about unmergeable pulls"
-        stats += "\n"
-      else
-        stats = "No open PRs :tada:"
+      _.each(
+        @prsGroupedByUser(prs),
+        (prs, user) =>
+          linksToPrs = _.map(
+            prs,
+            (pr) -> "<#{pr.Links.html.href}|##{pr.number}>"
+          )
+          stats += "#{prs.length} by #{user}: #{linksToPrs.join(", ")}\n"
+      )
+
+      stats += "\n"
+      stats += "#{mergeablePrCount} mergeable\n"
+      stats += "#{unMergeablePrCount} unmergeable\n"
+      stats += "\n"
+      stats += "Run `@bot pr conflicts` to know details about unmergeable pulls"
+      stats += "\n"
+    else
+      stats = "No open PRs :tada:"
 
 module.exports = PrAll
